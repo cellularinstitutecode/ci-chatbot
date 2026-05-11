@@ -165,7 +165,7 @@ function hsSave(props) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'create', properties: props })
-    }).then(function(r) { return r.json(); }).then(function(d) {
+    }).then(function(r) { console.log('[CI] create status:', r.status); return r.json(); }).then(function(d) {
       if (d.id) {
         hsContactId = d.id;
         console.log('[CI] Contact created:', hsContactId);
@@ -371,7 +371,7 @@ function buildSummaryHTML(score, cls) {
   html += '<div class="summary-row"><span class="label">Can Travel</span><span class="value">' + lead.travel + '</span></div>';
   html += '<div class="summary-row"><span class="label">Budget</span><span class="value">' + lead.budget + '</span></div>';
   html += '<div class="summary-row"><span class="label">Timeline</span><span class="value">' + lead.timeline + '</span></div>';
-  html += '<div style="margin-top:10px;text-align:center;"><span class="score-badge ' + cls + '">' + (score >= 70 ? 'Hot' : score >= 40 ? 'Warm' : 'Cool') + '</span></div>';
+  
   html += '</div>';
   return html;
 }
