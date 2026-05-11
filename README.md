@@ -1,1 +1,1 @@
-# ci-chatbot
+# CellularInstitute-chatbot
