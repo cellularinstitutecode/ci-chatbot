@@ -155,11 +155,15 @@
   <div class="cw-footer">Powered by <a href="https://cellularinstitute.com" target="_blank">Cellular Institute</a></div>
 </div>
 <script>
-// HubSpot calls go through Vercel proxy — token never exposed in frontend code
+// HubSpot calls go through Vercel proxy â token never exposed in frontend code
 var PROXY_URL = 'https://ci-hubspot-proxy.vercel.app/api/hubspot';
 var hsContactId = null;
 
 function hsSave(props) {
+  // Only create contact once we have all 4 required fields
+  if (!hsContactId && (!lead.firstName || !lead.lastName || !lead.phone || !lead.email)) {
+    return;
+  }
   if (!hsContactId) {
     fetch(PROXY_URL, {
       method: 'POST',
@@ -362,7 +366,7 @@ function scoreLabel(s) {
 
 function buildSummaryHTML(score, cls) {
   var html = '<div class="summary-card">';
-  html += '<h3>Your Lead Profile</h3>';
+  html += '<h3>Your Profile</h3>';
   html += '<div class="summary-row"><span class="label">Name</span><span class="value">' + lead.firstName + ' ' + lead.lastName + '</span></div>';
   html += '<div class="summary-row"><span class="label">Phone</span><span class="value">' + lead.phone + '</span></div>';
   html += '<div class="summary-row"><span class="label">Email</span><span class="value">' + lead.email + '</span></div>';
