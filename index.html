@@ -155,24 +155,23 @@
   <div class="cw-footer">Powered by <a href="https://cellularinstitute.com" target="_blank">Cellular Institute</a></div>
 </div>
 <script>
-var HS_TOKEN = 'pat-na1-7f92364f-5a2f-44fd-b780-d93ddafba029';
+// HubSpot calls go through Vercel proxy — token never exposed in frontend code
+var PROXY_URL = 'https://ci-hubspot-proxy.vercel.app/api/hubspot';
 var hsContactId = null;
 
 function hsSave(props) {
   if (!hsContactId) {
-    fetch('https://api.hubapi.com/crm/v3/objects/contacts', {
+    fetch(PROXY_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + HS_TOKEN },
-      body: JSON.stringify({ properties: props })
-    }).then(function(r) {
-      return r.json();
-    }).then(function(d) {
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'create', properties: props })
+    }).then(function(r) { return r.json(); }).then(function(d) {
       if (d.id) {
         hsContactId = d.id;
         console.log('[CI] Contact created:', hsContactId);
-      } else if (d.message && d.message.indexOf('already exists') > -1) {
-        var m = d.message.match(/ID: (\d+)/);
-        if (m) { hsContactId = m[1]; hsPatch(props); }
+      } else if (d.existingId) {
+        hsContactId = d.existingId;
+        hsPatch(props);
       } else {
         console.warn('[CI] Create error:', d);
       }
@@ -184,10 +183,10 @@ function hsSave(props) {
 
 function hsPatch(props) {
   if (!hsContactId) return;
-  fetch('https://api.hubapi.com/crm/v3/objects/contacts/' + hsContactId, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + HS_TOKEN },
-    body: JSON.stringify({ properties: props })
+  fetch(PROXY_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'update', contactId: hsContactId, properties: props })
   }).then(function(r) {
     if (r.ok) console.log('[CI] Contact updated:', hsContactId);
     else r.json().then(function(d){ console.warn('[CI] patch error:', d); });
