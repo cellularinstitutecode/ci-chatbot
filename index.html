@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cellular Institute · AI Coordinator · v2</title>
+  <title>Cellular Institute AI Coordinator v3</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -24,8 +24,6 @@
     }
     html, body { height: 100%; font-family: 'Inter', sans-serif; background: var(--ci-light); }
     body { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
-
-    /* ── WIDGET SHELL ── */
     #chat-widget {
       width: 420px; max-width: 100vw;
       background: var(--ci-white);
@@ -35,8 +33,6 @@
       overflow: hidden;
       max-height: 92vh;
     }
-
-    /* ── HEADER ── */
     .cw-header {
       background: var(--ci-navy);
       padding: 18px 20px 16px;
@@ -52,8 +48,6 @@
     .cw-header-text p { color: rgba(255,255,255,0.6); font-size: 12px; margin-top: 2px; }
     .cw-status { margin-left: auto; display: flex; align-items: center; gap: 6px; color: var(--ci-success); font-size: 12px; font-weight: 500; }
     .cw-status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ci-success); }
-
-    /* ── MESSAGES ── */
     .cw-messages {
       flex: 1; overflow-y: auto; padding: 20px 16px;
       display: flex; flex-direction: column; gap: 14px;
@@ -61,8 +55,6 @@
     }
     .cw-messages::-webkit-scrollbar { width: 4px; }
     .cw-messages::-webkit-scrollbar-thumb { background: var(--ci-border); border-radius: 4px; }
-
-    /* ── BUBBLES ── */
     .msg { display: flex; gap: 10px; animation: fadeUp .3s ease; }
     .msg.user { flex-direction: row-reverse; }
     @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
@@ -76,19 +68,11 @@
     .bot .msg-bubble { background: var(--ci-light); color: #1F2937; border-bottom-left-radius: 4px; }
     .user .msg-bubble { background: var(--ci-teal); color: var(--ci-white); border-bottom-right-radius: 4px; }
     .msg-bubble strong { font-weight: 600; }
-    .msg-bubble ul { padding-left: 18px; margin-top: 6px; }
-    .msg-bubble ul li { margin-bottom: 4px; }
-
-    /* ── TYPING ── */
     .typing-dots span { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--ci-gray); margin: 0 2px; animation: bounce 1.2s infinite; }
     .typing-dots span:nth-child(2) { animation-delay: .2s; }
     .typing-dots span:nth-child(3) { animation-delay: .4s; }
     @keyframes bounce { 0%,60%,100% { transform: translateY(0); } 30% { transform: translateY(-6px); } }
-
-    /* ── INPUT AREA ── */
     .cw-input-area { padding: 12px 16px 16px; border-top: 1px solid var(--ci-border); }
-
-    /* ── QUICK REPLY BUTTONS ── */
     .cw-quick-replies { display: flex; flex-wrap: wrap; gap: 8px; padding: 4px 0 8px; }
     .qr-btn {
       padding: 8px 16px; border: 2px solid var(--ci-teal);
@@ -98,8 +82,6 @@
     }
     .qr-btn:hover { background: var(--ci-teal); color: var(--ci-white); }
     .qr-btn.selected { background: var(--ci-teal); color: var(--ci-white); }
-
-    /* ── TEXT INPUT ROW ── */
     .cw-text-input-row { display: flex; gap: 8px; }
     .cw-text-input {
       flex: 1; padding: 10px 14px;
@@ -119,8 +101,6 @@
     }
     .cw-send-btn:hover { background: #0096B4; }
     .cw-send-btn svg { fill: white; }
-
-    /* ── PHONE INPUT ROW ── */
     .cw-phone-row { display: flex; gap: 6px; }
     .cw-country-select {
       padding: 10px 8px;
@@ -133,14 +113,12 @@
       flex-shrink: 0; max-width: 110px;
     }
     .cw-country-select:focus { border-color: var(--ci-teal); }
-
-    /* ── SUMMARY CARD ── */
     .summary-card {
-      background: linear-gradient(135deg, var(--ci-navy) 0%, #1a3355 100%);
+      background: linear-gradient(135deg, #0A1931 0%, #1a3355 100%);
       border-radius: 14px; padding: 18px;
-      color: var(--ci-white); margin-top: 4px;
+      color: #FFFFFF; margin-top: 4px;
     }
-    .summary-card h3 { font-size: 14px; font-weight: 600; margin-bottom: 12px; color: var(--ci-gold); }
+    .summary-card h3 { font-size: 14px; font-weight: 600; margin-bottom: 12px; color: #C9A84C; }
     .summary-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 13px; }
     .summary-row:last-child { border-bottom: none; }
     .summary-row .label { color: rgba(255,255,255,0.6); }
@@ -148,24 +126,18 @@
     .score-badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-top: 8px; }
     .score-hot { background: #EF4444; }
     .score-warm { background: #F59E0B; }
-    .score-cool { background: var(--ci-teal); }
-
-    /* ── PROGRESS BAR ── */
+    .score-cool { background: #00B4D8; }
     .cw-progress { padding: 0 16px 4px; }
     .progress-bar { height: 3px; background: var(--ci-border); border-radius: 3px; overflow: hidden; }
     .progress-fill { height: 100%; background: var(--ci-teal); border-radius: 3px; transition: width .5s ease; }
-
-    /* ── FOOTER ── */
     .cw-footer { text-align: center; font-size: 11px; color: var(--ci-gray); padding: 6px 0 10px; }
     .cw-footer a { color: var(--ci-teal); text-decoration: none; }
   </style>
 </head>
 <body>
-
 <div id="chat-widget">
-  <!-- Header -->
   <div class="cw-header">
-    <div class="cw-avatar">🧬</div>
+    <div class="cw-avatar">&#129516;</div>
     <div class="cw-header-text">
       <h2>Cellular Institute AI</h2>
       <p>Regenerative Medicine Coordinator</p>
@@ -175,141 +147,73 @@
       Online
     </div>
   </div>
-
-  <!-- Progress -->
   <div class="cw-progress">
     <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
   </div>
-
-  <!-- Messages -->
   <div class="cw-messages" id="chatMessages"></div>
-
-  <!-- Input Area -->
   <div class="cw-input-area" id="inputArea"></div>
-
-  <!-- Footer -->
   <div class="cw-footer">Powered by <a href="https://cellularinstitute.com" target="_blank">Cellular Institute</a></div>
 </div>
-
 <script>
-// ─────────────────────────────────────────
-// HUBSPOT CONFIG
-// ─────────────────────────────────────────
-const HS_PORTAL_ID   = '47689652';
-const HS_ACCESS_TOKEN = 'pat-na1-7f92364f-5a2f-44fd-b780-d93ddafba029';
+var HS_TOKEN = 'pat-na1-7f92364f-5a2f-44fd-b780-d93ddafba029';
+var hsContactId = null;
 
-// Save to HubSpot — creates contact after email, updates after each step
-let hsContactId = null;
-
-async function hsSave(properties) {
-  try {
-    if (!hsContactId) {
-      // CREATE new contact
-      const res = await fetch('https://api.hubapi.com/crm/v3/objects/contacts', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + HS_ACCESS_TOKEN
-        },
-        body: JSON.stringify({ properties })
-      });
-      if (res.ok) {
-        const data = await res.json();
-        hsContactId = data.id;
-        console.log('[CI] HubSpot contact created:', hsContactId);
+function hsSave(props) {
+  if (!hsContactId) {
+    fetch('https://api.hubapi.com/crm/v3/objects/contacts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + HS_TOKEN },
+      body: JSON.stringify({ properties: props })
+    }).then(function(r) {
+      return r.json();
+    }).then(function(d) {
+      if (d.id) {
+        hsContactId = d.id;
+        console.log('[CI] Contact created:', hsContactId);
+      } else if (d.message && d.message.indexOf('already exists') > -1) {
+        var m = d.message.match(/ID: (\d+)/);
+        if (m) { hsContactId = m[1]; hsPatch(props); }
       } else {
-        // Contact may already exist — try to find by email and update
-        const errData = await res.json();
-        if (errData.category === 'CONFLICT' && errData.message && errData.message.includes('Contact already exists')) {
-          const existingId = errData.message.match(/ID: (\d+)/);
-          if (existingId) {
-            hsContactId = existingId[1];
-            await hsPatch(properties);
-          }
-        } else {
-          console.warn('[CI] HubSpot create error:', errData);
-        }
+        console.warn('[CI] Create error:', d);
       }
-    } else {
-      await hsPatch(properties);
-    }
-  } catch(e) {
-    console.warn('[CI] HubSpot save error:', e);
+    }).catch(function(e) { console.warn('[CI] error:', e); });
+  } else {
+    hsPatch(props);
   }
 }
 
-async function hsPatch(properties) {
+function hsPatch(props) {
   if (!hsContactId) return;
-  try {
-    const res = await fetch('https://api.hubapi.com/crm/v3/objects/contacts/' + hsContactId, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + HS_ACCESS_TOKEN
-      },
-      body: JSON.stringify({ properties })
-    });
-    if (res.ok) console.log('[CI] HubSpot contact updated:', hsContactId);
-    else console.warn('[CI] HubSpot patch error:', await res.json());
-  } catch(e) {
-    console.warn('[CI] HubSpot patch error:', e);
-  }
+  fetch('https://api.hubapi.com/crm/v3/objects/contacts/' + hsContactId, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + HS_TOKEN },
+    body: JSON.stringify({ properties: props })
+  }).then(function(r) {
+    if (r.ok) console.log('[CI] Contact updated:', hsContactId);
+    else r.json().then(function(d){ console.warn('[CI] patch error:', d); });
+  }).catch(function(e){ console.warn('[CI] patch error:', e); });
 }
 
-// ─────────────────────────────────────────
-// LEAD DATA
-// ─────────────────────────────────────────
-const lead = {
-  firstName: '', lastName: '', phone: '', email: '',
-  segment: '', condition: '', travel: '', budget: '', timeline: '',
-  score: 0, status: ''
-};
+var lead = { firstName:'', lastName:'', phone:'', email:'', segment:'', condition:'', travel:'', budget:'', timeline:'', score:0, status:'' };
 
-// ─────────────────────────────────────────
-// CONVERSATION STEPS
-// ─────────────────────────────────────────
-const STEPS = [
-  'welcome',
-  'first_name',
-  'last_name',
-  'phone',
-  'email',
-  'segment',
-  'condition',
-  'travel',
-  'budget',
-  'timeline',
-  'summary'
-];
+var STEPS = ['welcome','first_name','last_name','phone','email','segment','condition','travel','budget','timeline','summary'];
+var progressMap = { welcome:0, first_name:10, last_name:20, phone:30, email:40, segment:50, condition:60, travel:70, budget:80, timeline:90, summary:100 };
 
-let currentStep = 0;
-const progressMap = {
-  welcome: 0, first_name: 10, last_name: 20, phone: 30, email: 40,
-  segment: 50, condition: 60, travel: 70, budget: 80, timeline: 90, summary: 100
-};
+var messagesEl = document.getElementById('chatMessages');
+var inputAreaEl = document.getElementById('inputArea');
+var progressEl = document.getElementById('progressFill');
 
-// ─────────────────────────────────────────
-// DOM HELPERS
-// ─────────────────────────────────────────
-const messagesEl  = document.getElementById('chatMessages');
-const inputAreaEl = document.getElementById('inputArea');
-const progressEl  = document.getElementById('progressFill');
+function setProgress(step) { progressEl.style.width = (progressMap[step] || 0) + '%'; }
+function scrollBottom() { messagesEl.scrollTop = messagesEl.scrollHeight; }
 
-function setProgress(step) {
-  progressEl.style.width = (progressMap[step] || 0) + '%';
-}
-
-function scrollBottom() {
-  messagesEl.scrollTop = messagesEl.scrollHeight;
-}
-
-function addMsg(text, role = 'bot', isHTML = false) {
-  const wrapper = document.createElement('div');
+function addMsg(text, role, isHTML) {
+  role = role || 'bot'; isHTML = isHTML || false;
+  var wrapper = document.createElement('div');
   wrapper.className = 'msg ' + role;
-  const avatar = document.createElement('div');
+  var avatar = document.createElement('div');
   avatar.className = 'msg-avatar';
-  avatar.textContent = role === 'bot' ? '🧬' : '👤';
-  const bubble = document.createElement('div');
+  avatar.textContent = role === 'bot' ? String.fromCodePoint(129516) : String.fromCodePoint(128100);
+  var bubble = document.createElement('div');
   bubble.className = 'msg-bubble';
   if (isHTML) bubble.innerHTML = text;
   else bubble.textContent = text;
@@ -321,30 +225,25 @@ function addMsg(text, role = 'bot', isHTML = false) {
 }
 
 function showTyping() {
-  const wrapper = document.createElement('div');
-  wrapper.className = 'msg bot';
-  wrapper.id = 'typingIndicator';
-  const avatar = document.createElement('div');
+  var wrapper = document.createElement('div');
+  wrapper.className = 'msg bot'; wrapper.id = 'typingIndicator';
+  var avatar = document.createElement('div');
   avatar.className = 'msg-avatar';
-  avatar.textContent = '🧬';
-  const bubble = document.createElement('div');
+  avatar.textContent = String.fromCodePoint(129516);
+  var bubble = document.createElement('div');
   bubble.className = 'msg-bubble typing-dots';
   bubble.innerHTML = '<span></span><span></span><span></span>';
-  wrapper.appendChild(avatar);
-  wrapper.appendChild(bubble);
-  messagesEl.appendChild(wrapper);
-  scrollBottom();
+  wrapper.appendChild(avatar); wrapper.appendChild(bubble);
+  messagesEl.appendChild(wrapper); scrollBottom();
 }
 
-function hideTyping() {
-  const t = document.getElementById('typingIndicator');
-  if (t) t.remove();
-}
+function hideTyping() { var t = document.getElementById('typingIndicator'); if (t) t.remove(); }
 
-function botSay(text, delay = 600, isHTML = false) {
-  return new Promise(resolve => {
+function botSay(text, delay, isHTML) {
+  delay = delay || 600; isHTML = isHTML || false;
+  return new Promise(function(resolve) {
     showTyping();
-    setTimeout(() => {
+    setTimeout(function() {
       hideTyping();
       addMsg(text, 'bot', isHTML);
       resolve();
@@ -352,24 +251,18 @@ function botSay(text, delay = 600, isHTML = false) {
   });
 }
 
-function clearInput() {
-  inputAreaEl.innerHTML = '';
-}
-
-// ─────────────────────────────────────────
-// STEP RENDERERS
-// ─────────────────────────────────────────
+function clearInput() { inputAreaEl.innerHTML = ''; }
 
 function renderQuickReplies(options, onSelect) {
   clearInput();
-  const container = document.createElement('div');
+  var container = document.createElement('div');
   container.className = 'cw-quick-replies';
-  options.forEach(opt => {
-    const btn = document.createElement('button');
+  options.forEach(function(opt) {
+    var btn = document.createElement('button');
     btn.className = 'qr-btn';
     btn.textContent = opt.label || opt;
-    btn.addEventListener('click', () => {
-      container.querySelectorAll('.qr-btn').forEach(b => b.disabled = true);
+    btn.addEventListener('click', function() {
+      container.querySelectorAll('.qr-btn').forEach(function(b){ b.disabled = true; });
       btn.classList.add('selected');
       addMsg(opt.label || opt, 'user');
       onSelect(opt.value !== undefined ? opt.value : (opt.label || opt));
@@ -379,304 +272,267 @@ function renderQuickReplies(options, onSelect) {
   inputAreaEl.appendChild(container);
 }
 
-function renderTextInput(placeholder, onSubmit, inputType = 'text') {
+function renderTextInput(placeholder, onSubmit, inputType) {
+  inputType = inputType || 'text';
   clearInput();
-  const row = document.createElement('div');
+  var row = document.createElement('div');
   row.className = 'cw-text-input-row';
-  const input = document.createElement('input');
+  var input = document.createElement('input');
   input.type = inputType;
   input.className = 'cw-text-input';
   input.placeholder = placeholder;
-  const btn = document.createElement('button');
+  var btn = document.createElement('button');
   btn.className = 'cw-send-btn';
   btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24"><path d="M2 21l21-9-21-9v7l15 2-15 2z"/></svg>';
-  const submit = () => {
-    const val = input.value.trim();
+  var submit = function() {
+    var val = input.value.trim();
     if (!val) return;
     input.disabled = true; btn.disabled = true;
     addMsg(val, 'user');
     onSubmit(val);
   };
   btn.addEventListener('click', submit);
-  input.addEventListener('keydown', e => { if (e.key === 'Enter') submit(); });
-  row.appendChild(input);
-  row.appendChild(btn);
+  input.addEventListener('keydown', function(e){ if (e.key === 'Enter') submit(); });
+  row.appendChild(input); row.appendChild(btn);
   inputAreaEl.appendChild(row);
-  setTimeout(() => input.focus(), 100);
+  setTimeout(function(){ input.focus(); }, 100);
 }
 
 function renderPhoneInput(onSubmit) {
   clearInput();
-  const row = document.createElement('div');
+  var row = document.createElement('div');
   row.className = 'cw-phone-row cw-text-input-row';
-
-  const select = document.createElement('select');
+  var select = document.createElement('select');
   select.className = 'cw-country-select';
-  const countryCodes = [
-    {code: '+1',   label: '🇺🇸 +1 US/CA'},
-    {code: '+52',  label: '🇲🇽 +52 MX'},
-    {code: '+44',  label: '🇬🇧 +44 UK'},
-    {code: '+34',  label: '🇪🇸 +34 ES'},
-    {code: '+49',  label: '🇩🇪 +49 DE'},
-    {code: '+33',  label: '🇫🇷 +33 FR'},
-    {code: '+39',  label: '🇮🇹 +39 IT'},
-    {code: '+55',  label: '🇧🇷 +55 BR'},
-    {code: '+54',  label: '🇦🇷 +54 AR'},
-    {code: '+57',  label: '🇨🇴 +57 CO'},
-    {code: '+56',  label: '🇨🇱 +56 CL'},
-    {code: '+51',  label: '🇵🇪 +51 PE'},
-    {code: '+593', label: '🇪🇨 +593 EC'},
-    {code: '+502', label: '🇬🇹 +502 GT'},
-    {code: '+506', label: '🇨🇷 +506 CR'},
-    {code: '+61',  label: '🇦🇺 +61 AU'},
-    {code: '+81',  label: '🇯🇵 +81 JP'},
-    {code: '+82',  label: '🇰🇷 +82 KR'},
-    {code: '+86',  label: '🇨🇳 +86 CN'},
-    {code: '+91',  label: '🇮🇳 +91 IN'},
-    {code: '+971', label: '🇦🇪 +971 AE'},
-    {code: '+966', label: '🇸🇦 +966 SA'},
-    {code: '+972', label: '🇮🇱 +972 IL'},
-    {code: '+7',   label: '🇷🇺 +7 RU'},
-    {code: '+27',  label: '🇿🇦 +27 ZA'},
-    {code: '+234', label: '🇳🇬 +234 NG'},
-    {code: '+20',  label: '🇪🇬 +20 EG'},
-    {code: '+212', label: '🇲🇦 +212 MA'},
+  var codes = [
+    ['+1','US/CA'],['  +52','MX'],['+44','UK'],['+34','ES'],['+49','DE'],['+33','FR'],
+    ['+39','IT'],['+55','BR'],['+54','AR'],['+57','CO'],['+56','CL'],['+51','PE'],
+    ['+593','EC'],['+502','GT'],['+506','CR'],['+61','AU'],['+81','JP'],['+82','KR'],
+    ['+86','CN'],['+91','IN'],['+971','AE'],['+966','SA'],['+972','IL'],['+7','RU'],
+    ['+27','ZA'],['+234','NG'],['+20','EG'],['+212','MA']
   ];
-  countryCodes.forEach(c => {
-    const opt = document.createElement('option');
-    opt.value = c.code;
-    opt.textContent = c.label;
+  codes.forEach(function(c) {
+    var opt = document.createElement('option');
+    opt.value = c[0].trim();
+    opt.textContent = c[0].trim() + ' ' + c[1];
     select.appendChild(opt);
   });
-
-  const input = document.createElement('input');
-  input.type = 'tel';
-  input.className = 'cw-text-input';
-  input.placeholder = 'Phone number';
-
-  const btn = document.createElement('button');
+  var input = document.createElement('input');
+  input.type = 'tel'; input.className = 'cw-text-input'; input.placeholder = 'Phone number';
+  var btn = document.createElement('button');
   btn.className = 'cw-send-btn';
   btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24"><path d="M2 21l21-9-21-9v7l15 2-15 2z"/></svg>';
-
-  const submit = () => {
-    const num = input.value.trim();
+  var submit = function() {
+    var num = input.value.trim();
     if (!num) return;
     input.disabled = true; btn.disabled = true; select.disabled = true;
-    const full = select.value + ' ' + num;
+    var full = select.value + ' ' + num;
     addMsg(full, 'user');
     onSubmit(full);
   };
   btn.addEventListener('click', submit);
-  input.addEventListener('keydown', e => { if (e.key === 'Enter') submit(); });
-
-  row.appendChild(select);
-  row.appendChild(input);
-  row.appendChild(btn);
+  input.addEventListener('keydown', function(e){ if (e.key === 'Enter') submit(); });
+  row.appendChild(select); row.appendChild(input); row.appendChild(btn);
   inputAreaEl.appendChild(row);
-  setTimeout(() => input.focus(), 100);
+  setTimeout(function(){ input.focus(); }, 100);
 }
 
-// ─────────────────────────────────────────
-// SCORING
-// ─────────────────────────────────────────
 function calcScore() {
-  let s = 0;
-  const cond = lead.condition.toLowerCase();
-  if (['als','parkinson','ms','stroke','spinal cord'].some(k => cond.includes(k))) s += 40;
-  else if (['arthritis','chronic pain','sports injury','back pain'].some(k => cond.includes(k))) s += 25;
+  var s = 0;
+  var cond = lead.condition.toLowerCase();
+  if (['als','parkinson','ms','multiple sclerosis','stroke','spinal cord'].some(function(k){ return cond.indexOf(k) > -1; })) s += 40;
+  else if (['arthritis','chronic pain','sports injury','back pain'].some(function(k){ return cond.indexOf(k) > -1; })) s += 25;
   else s += 15;
   if (lead.travel === 'Yes, I can travel') s += 20;
   else if (lead.travel === 'Maybe, need more info') s += 10;
-  const b = lead.budget.toLowerCase();
-  if (b.includes('15,000') || b.includes('20,000') || b.includes('no limit')) s += 30;
-  else if (b.includes('10,000')) s += 20;
-  else if (b.includes('5,000')) s += 10;
-  const t = lead.timeline.toLowerCase();
-  if (t.includes('asap') || t.includes('1–3') || t.includes('1-3')) s += 10;
-  else if (t.includes('3–6') || t.includes('3-6')) s += 5;
+  var b = lead.budget.toLowerCase();
+  if (b.indexOf('15,000') > -1 || b.indexOf('20,000') > -1 || b.indexOf('+') > -1) s += 30;
+  else if (b.indexOf('10,000') > -1) s += 20;
+  else if (b.indexOf('5,000') > -1) s += 10;
+  var t = lead.timeline.toLowerCase();
+  if (t.indexOf('asap') > -1 || t.indexOf('1') === 0) s += 10;
+  else if (t.indexOf('3') === 0) s += 5;
   return s;
 }
 
 function scoreLabel(s) {
-  if (s >= 70) return { label: '🔥 Hot Lead', cls: 'score-hot', status: 'HOT' };
-  if (s >= 40) return { label: '🌡 Warm Lead', cls: 'score-warm', status: 'WARM' };
-  return { label: '❄️ Cool Lead', cls: 'score-cool', status: 'COOL' };
+  if (s >= 70) return { label: 'Hot Lead', cls: 'score-hot', status: 'HOT', emoji: 'Fire' };
+  if (s >= 40) return { label: 'Warm Lead', cls: 'score-warm', status: 'WARM', emoji: 'Warm' };
+  return { label: 'Cool Lead', cls: 'score-cool', status: 'COOL', emoji: 'Cool' };
 }
 
-// ─────────────────────────────────────────
-// FLOW CONTROLLER
-// ─────────────────────────────────────────
-async function goToStep(step) {
-  setProgress(step);
-  currentStep = STEPS.indexOf(step);
+function buildSummaryHTML(score, cls) {
+  var html = '<div class="summary-card">';
+  html += '<h3>Your Lead Profile</h3>';
+  html += '<div class="summary-row"><span class="label">Name</span><span class="value">' + lead.firstName + ' ' + lead.lastName + '</span></div>';
+  html += '<div class="summary-row"><span class="label">Phone</span><span class="value">' + lead.phone + '</span></div>';
+  html += '<div class="summary-row"><span class="label">Email</span><span class="value">' + lead.email + '</span></div>';
+  html += '<div class="summary-row"><span class="label">Segment</span><span class="value">' + lead.segment + '</span></div>';
+  html += '<div class="summary-row"><span class="label">Condition</span><span class="value">' + lead.condition + '</span></div>';
+  html += '<div class="summary-row"><span class="label">Can Travel</span><span class="value">' + lead.travel + '</span></div>';
+  html += '<div class="summary-row"><span class="label">Budget</span><span class="value">' + lead.budget + '</span></div>';
+  html += '<div class="summary-row"><span class="label">Timeline</span><span class="value">' + lead.timeline + '</span></div>';
+  html += '<div style="margin-top:10px;text-align:center;"><span class="score-badge ' + cls + '">' + (score >= 70 ? 'Hot Lead' : score >= 40 ? 'Warm Lead' : 'Cool Lead') + '</span></div>';
+  html += '</div>';
+  return html;
+}
 
+function goToStep(step) {
+  setProgress(step);
   if (step === 'welcome') {
-    await botSay('👋 Welcome to <strong>Cellular Institute</strong>! I'm your AI Coordinator for regenerative medicine treatments in Cancún.', 800, true);
-    await botSay('I'll help match you with the right stem cell or regenerative therapy — and connect you with our medical team.', 700);
-    await botSay('Ready to get started?', 400);
-    renderQuickReplies(['Yes, go ahead', 'Tell me more first'], val => {
-      if (val === 'Tell me more first') {
-        botSay('Of course! We specialize in advanced stem cell therapies, PRP treatments, and regenerative medicine — with world-class doctors in Cancún, Mexico. Thousands of patients have seen life-changing results. Ready now?', 700).then(() => {
-          renderQuickReplies(['Yes, let's start'], () => goToStep('first_name'));
-        });
-      } else {
-        goToStep('first_name');
-      }
+    botSay('Welcome to <strong>Cellular Institute</strong>! I am your AI Coordinator for regenerative medicine in Cancun.', 800, true).then(function() {
+      return botSay('I will help match you with the right stem cell or regenerative therapy and connect you with our medical team.', 700);
+    }).then(function() {
+      return botSay('Ready to get started?', 400);
+    }).then(function() {
+      renderQuickReplies(['Yes, go ahead', 'Tell me more first'], function(val) {
+        if (val === 'Tell me more first') {
+          botSay('We specialize in advanced stem cell therapies, PRP treatments, and regenerative medicine with world-class doctors in Cancun, Mexico. Thousands of patients have seen life-changing results. Ready now?', 700).then(function() {
+            renderQuickReplies(['Yes, lets start'], function() { goToStep('first_name'); });
+          });
+        } else {
+          goToStep('first_name');
+        }
+      });
     });
   }
 
   else if (step === 'first_name') {
-    await botSay('Great! Let's start with a few quick details so we can personalize your experience. 😊', 600);
-    await botSay('What's your <strong>first name</strong>?', 400, true);
-    renderTextInput('Your first name', val => {
-      lead.firstName = val;
-      goToStep('last_name');
+    botSay("Great! Let's start with a few quick details so we can personalize your experience.", 600).then(function() {
+      return botSay('What is your <strong>first name</strong>?', 400, true);
+    }).then(function() {
+      renderTextInput('Your first name', function(val) {
+        lead.firstName = val;
+        goToStep('last_name');
+      });
     });
   }
 
   else if (step === 'last_name') {
-    await botSay('Nice to meet you, ' + lead.firstName + '! What's your <strong>last name</strong>?', 500, true);
-    renderTextInput('Your last name', val => {
-      lead.lastName = val;
-      goToStep('phone');
+    botSay('Nice to meet you, ' + lead.firstName + '! What is your <strong>last name</strong>?', 500, true).then(function() {
+      renderTextInput('Your last name', function(val) {
+        lead.lastName = val;
+        goToStep('phone');
+      });
     });
   }
 
   else if (step === 'phone') {
-    await botSay('What's the best phone number to reach you? (Select your country code first)', 600);
-    renderPhoneInput(val => {
-      lead.phone = val;
-      goToStep('email');
+    botSay('What is the best phone number to reach you? Select your country code first.', 600).then(function() {
+      renderPhoneInput(function(val) {
+        lead.phone = val;
+        goToStep('email');
+      });
     });
   }
 
   else if (step === 'email') {
-    await botSay('And your <strong>email address</strong>?', 500, true);
-    renderTextInput('your@email.com', async val => {
-      lead.email = val;
-      // ── HUBSPOT SAVE POINT 1: Create contact immediately ──
-      hsSave({
-        firstname: lead.firstName,
-        lastname:  lead.lastName,
-        phone:     lead.phone,
-        email:     lead.email,
-        hs_lead_status: 'IN_PROGRESS',
-        lead_source: 'CI Chatbot'
-      });
-      await goToStep('segment');
-    }, 'email');
+    botSay('And your <strong>email address</strong>?', 500, true).then(function() {
+      renderTextInput('your@email.com', function(val) {
+        lead.email = val;
+        hsSave({
+          firstname: lead.firstName,
+          lastname: lead.lastName,
+          phone: lead.phone,
+          email: lead.email,
+          hs_lead_status: 'IN_PROGRESS',
+          lead_source: 'CI Chatbot'
+        });
+        goToStep('segment');
+      }, 'email');
+    });
   }
 
   else if (step === 'segment') {
-    await botSay('Perfect, ' + lead.firstName + '! Now, which best describes you?', 600);
-    renderQuickReplies([
-      { label: '🙋 Patient',    value: 'Patient' },
-      { label: '❤️ Caregiver', value: 'Caregiver' },
-      { label: '🏃 Athlete',   value: 'Athlete' },
-      { label: '🌿 Wellness',  value: 'Wellness' },
-      { label: '🩺 Physician', value: 'Physician' }
-    ], async val => {
-      lead.segment = val;
-      hsSave({ ci_segment: val });
-
-      if (val === 'Wellness') {
-        await botSay('Wonderful! Our wellness programs focus on anti-aging, energy optimization, and full-body rejuvenation. Let me ask a couple more questions.', 700);
-        await goToStep('condition');
-      } else if (val === 'Physician') {
-        await botSay('Thank you, Doctor! We have dedicated physician collaboration programs. Let me gather a few more details.', 700);
-        await goToStep('condition');
-      } else {
-        await goToStep('condition');
-      }
+    botSay('Perfect, ' + lead.firstName + '! Which best describes you?', 600).then(function() {
+      renderQuickReplies([
+        { label: 'Patient',    value: 'Patient' },
+        { label: 'Caregiver', value: 'Caregiver' },
+        { label: 'Athlete',   value: 'Athlete' },
+        { label: 'Wellness',  value: 'Wellness' },
+        { label: 'Physician', value: 'Physician' }
+      ], function(val) {
+        lead.segment = val;
+        hsSave({ ci_segment: val });
+        if (val === 'Wellness') {
+          botSay('Our wellness programs focus on anti-aging, energy optimization, and full-body rejuvenation. Let me ask a couple more questions.', 700).then(function(){ goToStep('condition'); });
+        } else if (val === 'Physician') {
+          botSay('Thank you, Doctor! We have dedicated physician collaboration programs. Let me gather a few more details.', 700).then(function(){ goToStep('condition'); });
+        } else {
+          goToStep('condition');
+        }
+      });
     });
   }
 
   else if (step === 'condition') {
-    let condQuestion = 'What condition or health goal are you looking to address?';
-    if (lead.segment === 'Athlete') condQuestion = 'What injury or performance goal brings you to us?';
-    if (lead.segment === 'Wellness') condQuestion = 'What wellness goal are you focusing on?';
-    if (lead.segment === 'Physician') condQuestion = 'What condition does your patient have?';
-    await botSay(condQuestion, 600);
-
-    const conditionOpts = [
-      'ALS', 'Parkinson's Disease', 'Multiple Sclerosis',
-      'Arthritis / Joint Pain', 'Sports Injury / Recovery',
-      'Stroke Rehabilitation', 'Spinal Cord / Back Pain',
-      'Chronic Pain', 'Anti-Aging / Wellness', 'Other'
-    ];
-    renderQuickReplies(conditionOpts, async val => {
-      lead.condition = val;
-      hsSave({ ci_condition: val });
-
-      if (val === 'Other') {
-        clearInput();
-        await botSay('Please tell us more about the condition or health goal:', 400);
-        renderTextInput('Describe your condition or goal', async otherVal => {
-          lead.condition = otherVal;
-          hsSave({ ci_condition: otherVal });
-          await goToStep('travel');
-        });
-      } else {
-        await goToStep('travel');
-      }
+    var condQ = 'What condition or health goal are you looking to address?';
+    if (lead.segment === 'Athlete') condQ = 'What injury or performance goal brings you to us?';
+    if (lead.segment === 'Wellness') condQ = 'What wellness goal are you focusing on?';
+    if (lead.segment === 'Physician') condQ = 'What condition does your patient have?';
+    botSay(condQ, 600).then(function() {
+      renderQuickReplies([
+        'ALS', "Parkinson's Disease", 'Multiple Sclerosis',
+        'Arthritis / Joint Pain', 'Sports Injury / Recovery',
+        'Stroke Rehabilitation', 'Spinal Cord / Back Pain',
+        'Chronic Pain', 'Anti-Aging / Wellness', 'Other'
+      ], function(val) {
+        if (val === 'Other') {
+          botSay('Please tell us more about the condition or health goal:', 400).then(function() {
+            renderTextInput('Describe your condition', function(otherVal) {
+              lead.condition = otherVal;
+              hsSave({ ci_condition: otherVal });
+              goToStep('travel');
+            });
+          });
+        } else {
+          lead.condition = val;
+          hsSave({ ci_condition: val });
+          goToStep('travel');
+        }
+      });
     });
   }
 
   else if (step === 'travel') {
-    await botSay('Our treatments are performed at our world-class clinic in <strong>Cancún, Mexico</strong>. Are you able to travel?', 600, true);
-    renderQuickReplies([
-      'Yes, I can travel',
-      'Maybe, need more info',
-      'No, looking for local options'
-    ], async val => {
-      lead.travel = val;
-      hsSave({ ci_can_travel: val });
-      await goToStep('budget');
+    botSay('Our treatments are performed at our clinic in <strong>Cancun, Mexico</strong>. Are you able to travel?', 600, true).then(function() {
+      renderQuickReplies(['Yes, I can travel', 'Maybe, need more info', 'No, looking for local options'], function(val) {
+        lead.travel = val;
+        hsSave({ ci_can_travel: val });
+        goToStep('budget');
+      });
     });
   }
 
   else if (step === 'budget') {
-    await botSay('To help match you with the right program, what's your approximate <strong>out-of-pocket budget</strong>?', 600, true);
-    renderQuickReplies([
-      'Under $5,000',
-      '$5,000 – $10,000',
-      '$10,000 – $15,000',
-      '$15,000 – $20,000',
-      '$20,000+',
-      'Not sure yet'
-    ], async val => {
-      lead.budget = val;
-      hsSave({ ci_budget: val });
-      await goToStep('timeline');
+    botSay('To help match you with the right program, what is your approximate <strong>out-of-pocket budget</strong>?', 600, true).then(function() {
+      renderQuickReplies(['Under $5,000', '$5,000 to $10,000', '$10,000 to $15,000', '$15,000 to $20,000', '$20,000+', 'Not sure yet'], function(val) {
+        lead.budget = val;
+        hsSave({ ci_budget: val });
+        goToStep('timeline');
+      });
     });
   }
 
   else if (step === 'timeline') {
-    await botSay('When are you hoping to begin treatment?', 500);
-    renderQuickReplies([
-      'ASAP',
-      '1–3 months',
-      '3–6 months',
-      '6+ months',
-      'Just researching'
-    ], async val => {
-      lead.timeline = val;
-      hsSave({ ci_timeline: val });
-      await goToStep('summary');
+    botSay('When are you hoping to begin treatment?', 500).then(function() {
+      renderQuickReplies(['ASAP', '1 to 3 months', '3 to 6 months', '6+ months', 'Just researching'], function(val) {
+        lead.timeline = val;
+        hsSave({ ci_timeline: val });
+        goToStep('summary');
+      });
     });
   }
 
   else if (step === 'summary') {
-    const score = calcScore();
+    var score = calcScore();
     lead.score = score;
-    const { label, cls, status } = scoreLabel(score);
-    lead.status = status;
-
-    // ── HUBSPOT SAVE POINT 2: Full update with score & status ──
+    var sl = scoreLabel(score);
+    lead.status = sl.status;
     hsSave({
       ci_lead_score: score,
-      ci_lead_status: status,
-      hs_lead_status: status === 'HOT' ? 'CONNECTED' : (status === 'WARM' ? 'OPEN' : 'NEW'),
+      ci_lead_status: sl.status,
+      hs_lead_status: sl.status === 'HOT' ? 'CONNECTED' : (sl.status === 'WARM' ? 'OPEN' : 'NEW'),
       ci_timeline: lead.timeline,
       ci_budget: lead.budget,
       ci_can_travel: lead.travel,
@@ -684,61 +540,39 @@ async function goToStep(step) {
       ci_condition: lead.condition,
       lead_source: 'CI Chatbot'
     });
-
-    await botSay('Thank you, ' + lead.firstName + '! Here's a summary of your profile:', 700);
-
-    const summaryHTML = `
-      <div class="summary-card">
-        <h3>📋 Your Lead Profile</h3>
-        <div class="summary-row"><span class="label">Name</span><span class="value">${lead.firstName} ${lead.lastName}</span></div>
-        <div class="summary-row"><span class="label">Phone</span><span class="value">${lead.phone}</span></div>
-        <div class="summary-row"><span class="label">Email</span><span class="value">${lead.email}</span></div>
-        <div class="summary-row"><span class="label">Segment</span><span class="value">${lead.segment}</span></div>
-        <div class="summary-row"><span class="label">Condition</span><span class="value">${lead.condition}</span></div>
-        <div class="summary-row"><span class="label">Can Travel</span><span class="value">${lead.travel}</span></div>
-        <div class="summary-row"><span class="label">Budget</span><span class="value">${lead.budget}</span></div>
-        <div class="summary-row"><span class="label">Timeline</span><span class="value">${lead.timeline}</span></div>
-        <div style="margin-top:10px;text-align:center;">
-          <span class="score-badge ${cls}">${label}</span>
-        </div>
-      </div>
-    `;
-    addMsg(summaryHTML, 'bot', true);
-
-    await botSay('Your information has been saved. A member of our team will reach out to you shortly — usually within 24 hours.', 800);
-
-    if (status === 'HOT') {
-      await botSay('🔥 Based on your profile, you're a <strong>priority candidate</strong> for our regenerative programs. We'll have a coordinator contact you very soon!', 700, true);
-    } else if (status === 'WARM') {
-      await botSay('🌡 Great potential for treatment! Our team will review your profile and send you relevant program options.', 700);
-    } else {
-      await botSay('We appreciate your interest! Our team will send you educational resources and program information to help with your research.', 700);
-    }
-
-    clearInput();
-    const restartBtn = document.createElement('button');
-    restartBtn.className = 'qr-btn';
-    restartBtn.textContent = '🔄 Start Over';
-    restartBtn.style.margin = '8px auto 0';
-    restartBtn.addEventListener('click', () => {
-      // Reset
-      Object.keys(lead).forEach(k => { lead[k] = typeof lead[k] === 'number' ? 0 : ''; });
-      hsContactId = null;
-      messagesEl.innerHTML = '';
+    botSay('Thank you, ' + lead.firstName + '! Here is a summary of your profile:', 700).then(function() {
+      addMsg(buildSummaryHTML(score, sl.cls), 'bot', true);
+      return botSay('Your information has been saved. A member of our team will reach out to you shortly, usually within 24 hours.', 800);
+    }).then(function() {
+      if (sl.status === 'HOT') {
+        return botSay('Based on your profile, you are a <strong>priority candidate</strong> for our regenerative programs. We will have a coordinator contact you very soon!', 700, true);
+      } else if (sl.status === 'WARM') {
+        return botSay('Great potential for treatment! Our team will review your profile and send you relevant program options.', 700);
+      } else {
+        return botSay('We appreciate your interest! Our team will send you educational resources and program information to help with your research.', 700);
+      }
+    }).then(function() {
       clearInput();
-      goToStep('welcome');
+      var restartBtn = document.createElement('button');
+      restartBtn.className = 'qr-btn';
+      restartBtn.textContent = 'Start Over';
+      restartBtn.style.margin = '8px auto 0';
+      restartBtn.addEventListener('click', function() {
+        Object.keys(lead).forEach(function(k){ lead[k] = typeof lead[k] === 'number' ? 0 : ''; });
+        hsContactId = null;
+        messagesEl.innerHTML = '';
+        clearInput();
+        goToStep('welcome');
+      });
+      var btnWrap = document.createElement('div');
+      btnWrap.className = 'cw-quick-replies';
+      btnWrap.style.justifyContent = 'center';
+      btnWrap.appendChild(restartBtn);
+      inputAreaEl.appendChild(btnWrap);
     });
-    const btnWrap = document.createElement('div');
-    btnWrap.className = 'cw-quick-replies';
-    btnWrap.style.justifyContent = 'center';
-    btnWrap.appendChild(restartBtn);
-    inputAreaEl.appendChild(btnWrap);
   }
 }
 
-// ─────────────────────────────────────────
-// START
-// ─────────────────────────────────────────
 goToStep('welcome');
 </script>
 </body>
