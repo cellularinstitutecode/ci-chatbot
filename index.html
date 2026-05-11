@@ -155,15 +155,11 @@
   <div class="cw-footer">Powered by <a href="https://cellularinstitute.com" target="_blank">Cellular Institute</a></div>
 </div>
 <script>
-// HubSpot calls go through Vercel proxy â token never exposed in frontend code
+// HubSpot calls go through Vercel proxy — token never exposed in frontend code
 var PROXY_URL = 'https://ci-hubspot-proxy.vercel.app/api/hubspot';
 var hsContactId = null;
 
 function hsSave(props) {
-  // Only create contact once we have all 4 required fields
-  if (!hsContactId && (!lead.firstName || !lead.lastName || !lead.phone || !lead.email)) {
-    return;
-  }
   if (!hsContactId) {
     fetch(PROXY_URL, {
       method: 'POST',
@@ -359,9 +355,9 @@ function calcScore() {
 }
 
 function scoreLabel(s) {
-  if (s >= 70) return { label: 'Hot Lead', cls: 'score-hot', status: 'HOT', emoji: 'Fire' };
-  if (s >= 40) return { label: 'Warm Lead', cls: 'score-warm', status: 'WARM', emoji: 'Warm' };
-  return { label: 'Cool Lead', cls: 'score-cool', status: 'COOL', emoji: 'Cool' };
+  if (s >= 70) return { label: 'Hot', cls: 'score-hot', status: 'HOT', emoji: 'Fire' };
+  if (s >= 40) return { label: 'Warm', cls: 'score-warm', status: 'WARM', emoji: 'Warm' };
+  return { label: 'Cool', cls: 'score-cool', status: 'COOL', emoji: 'Cool' };
 }
 
 function buildSummaryHTML(score, cls) {
@@ -375,7 +371,7 @@ function buildSummaryHTML(score, cls) {
   html += '<div class="summary-row"><span class="label">Can Travel</span><span class="value">' + lead.travel + '</span></div>';
   html += '<div class="summary-row"><span class="label">Budget</span><span class="value">' + lead.budget + '</span></div>';
   html += '<div class="summary-row"><span class="label">Timeline</span><span class="value">' + lead.timeline + '</span></div>';
-  html += '<div style="margin-top:10px;text-align:center;"><span class="score-badge ' + cls + '">' + (score >= 70 ? 'Hot Lead' : score >= 40 ? 'Warm Lead' : 'Cool Lead') + '</span></div>';
+  html += '<div style="margin-top:10px;text-align:center;"><span class="score-badge ' + cls + '">' + (score >= 70 ? 'Hot' : score >= 40 ? 'Warm' : 'Cool') + '</span></div>';
   html += '</div>';
   return html;
 }
@@ -390,7 +386,7 @@ function goToStep(step) {
     }).then(function() {
       renderQuickReplies(['Yes, go ahead', 'Tell me more first'], function(val) {
         if (val === 'Tell me more first') {
-          botSay('We specialize in advanced stem cell therapies, PRP treatments, and regenerative medicine with world-class doctors in Cancun, Mexico. Thousands of patients have seen life-changing results. Ready now?', 700).then(function() {
+          botSay('We specialize in advanced stem cell therapies, PRP treatments, and regenerative medicine with world-class doctors in Cancun, Mexico. Thousands of patients have seen life-changing results.', 800).then(function() {
             renderQuickReplies(['Yes, lets start'], function() { goToStep('first_name'); });
           });
         } else {
