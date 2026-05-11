@@ -1,392 +1,1199 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cellular Institute · AI Coordinator</title>
+
+<title>Cellular Institute · AI Coordinator · v2</title>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
+
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
 <style>
+
 :root{--clay:#7A412D;--clay-deep:#5C2F1F;--cinnamon:#B17253;--tan:#DBBC9D;--almond:#F0DAC3;--parchment:#F7F2ED;--ink:#2C1810;--muted:#8B7560;}
+
 *{box-sizing:border-box;margin:0;padding:0;}
+
 html,body{height:100%;}
+
 body{font-family:'DM Sans','-apple-system','BlinkMacSystemFont','Segoe UI','Roboto','Helvetica Neue',sans-serif;background:radial-gradient(circle at 20% 0%,#F0DAC3 0%,transparent 55%),radial-gradient(circle at 80% 100%,#DBBC9D 0%,transparent 50%),#F7F2ED;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:1.5rem 1rem;color:var(--ink);-webkit-font-smoothing:antialiased;}
+
 body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.45 0 0 0 0 0.27 0 0 0 0 0.18 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:0.7;}
+
 .shell{position:relative;z-index:1;width:100%;max-width:440px;border-radius:24px;overflow:hidden;box-shadow:0 32px 80px rgba(92,47,31,0.22),0 4px 16px rgba(92,47,31,0.08),0 0 0 1px rgba(255,255,255,0.5) inset;display:flex;flex-direction:column;background:#fff;}
+
 .header{background:linear-gradient(135deg,var(--clay) 0%,var(--clay-deep) 100%);padding:22px 22px 18px;display:flex;align-items:center;gap:14px;position:relative;overflow:hidden;}
+
 .header::before{content:'';position:absolute;top:-50px;right:-40px;width:170px;height:170px;border-radius:50%;background:radial-gradient(circle,rgba(219,188,157,0.22) 0%,transparent 65%);}
+
 .header::after{content:'';position:absolute;bottom:-70px;left:25%;width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,rgba(177,114,83,0.28) 0%,transparent 70%);}
+
 .logo-ring{position:relative;z-index:1;width:46px;height:46px;border-radius:50%;background:rgba(240,218,195,0.12);border:1px solid rgba(240,218,195,0.32);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+
 .logo-ring svg{width:24px;height:24px;}
+
 .hinfo{flex:1;position:relative;z-index:1;}
+
 .hname{font-family:'Fraunces','Iowan Old Style','Georgia','Times New Roman',serif;font-weight:500;font-size:17px;color:var(--almond);letter-spacing:0.005em;line-height:1.1;}
+
 .hsub{font-family:'Fraunces','Iowan Old Style','Georgia','Times New Roman',serif;font-style:italic;font-size:10.5px;color:rgba(240,218,195,0.6);margin-top:3px;letter-spacing:0.04em;}
+
 .hstatus{font-size:9.5px;color:var(--tan);margin-top:6px;display:flex;align-items:center;gap:6px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;}
+
 .dot{width:5px;height:5px;border-radius:50%;background:#C8E4B8;box-shadow:0 0 6px #C8E4B8;animation:pulse 2.2s infinite;}
+
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.45;transform:scale(0.85)}}
+
 .trust-ribbon{background:linear-gradient(180deg,var(--almond) 0%,#EBD0B3 100%);padding:7px 14px;display:flex;justify-content:center;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid rgba(122,65,45,0.1);}
+
 .trust-item{font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:var(--clay-deep);font-weight:600;}
+
 .trust-divider{width:3px;height:3px;border-radius:50%;background:var(--cinnamon);opacity:0.5;}
+
 .prog-bar{background:var(--clay-deep);padding:10px 22px;display:flex;gap:5px;align-items:center;}
+
 .prog-step{flex:1;height:2px;border-radius:2px;background:rgba(240,218,195,0.12);transition:background 0.5s ease;}
+
 .prog-step.done{background:var(--tan);}
+
 .prog-step.active{background:var(--almond);}
+
 .prog-label{font-size:9px;color:rgba(240,218,195,0.65);margin-left:12px;white-space:nowrap;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;}
+
 #messages{height:460px;overflow-y:auto;padding:22px 18px 14px;display:flex;flex-direction:column;gap:14px;background:var(--parchment);scroll-behavior:smooth;}
+
 #messages::-webkit-scrollbar{width:4px;}
+
 #messages::-webkit-scrollbar-thumb{background:rgba(122,65,45,0.2);border-radius:2px;}
+
 .row{display:flex;gap:9px;}
+
 .row.bot{align-self:flex-start;max-width:92%;}
+
 .row.user{align-self:flex-end;max-width:82%;flex-direction:row-reverse;}
-.bavatar{width:32px;height:32px;border-radius:50%;background:var(--clay);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;font-family:'Fraunces',serif;font-weight:500;font-size:11px;color:var(--almond);letter-spacing:0.04em;border:1px solid var(--cinnamon);}
+
+.bavatar{width:32px;height:32px;border-radius:50%;background:var(--clay);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;font-family:'Fraunces','Iowan Old Style','Georgia','Times New Roman',serif;font-weight:500;font-size:11px;color:var(--almond);letter-spacing:0.04em;border:1px solid var(--cinnamon);}
+
 .bubble{padding:12px 16px;font-size:13px;line-height:1.65;animation:fadeUp 0.3s ease;}
+
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
 .row.bot .bubble{background:#FFFFFF;color:var(--ink);border-radius:4px 18px 18px 18px;border:1px solid rgba(122,65,45,0.08);box-shadow:0 1px 3px rgba(92,47,31,0.04);}
+
 .row.bot .bubble strong{color:var(--clay);font-weight:600;}
-.row.bot .bubble em{font-family:'Fraunces',serif;font-style:italic;color:var(--cinnamon);font-size:13.5px;}
+
+.row.bot .bubble em{font-family:'Fraunces','Iowan Old Style','Georgia','Times New Roman',serif;font-style:italic;color:var(--cinnamon);font-size:13.5px;}
+
 .row.bot .bubble .disclaimer{font-size:11px;color:var(--muted);font-style:italic;border-left:2px solid var(--tan);padding:4px 0 4px 10px;margin:8px 0 4px;line-height:1.5;}
-.row.bot .bubble .quote{font-family:'Fraunces',serif;font-style:italic;font-size:13px;color:var(--cinnamon);border-left:2px solid var(--tan);padding:6px 0 6px 12px;margin:6px 0;line-height:1.55;}
+
+.row.bot .bubble .quote{font-family:'Fraunces','Iowan Old Style','Georgia','Times New Roman',serif;font-style:italic;font-size:13px;color:var(--cinnamon);border-left:2px solid var(--tan);padding:6px 0 6px 12px;margin:6px 0;line-height:1.55;}
+
 .row.user .bubble{background:var(--clay);color:var(--almond);border-radius:18px 4px 18px 18px;}
+
 .summary-card{background:linear-gradient(180deg,#FFFFFF 0%,#FCF8F2 100%);border:1px solid rgba(122,65,45,0.15);border-radius:14px;padding:16px 16px 14px;margin-top:12px;box-shadow:0 2px 10px rgba(92,47,31,0.05);}
-.sc-title{font-family:'Fraunces',serif;font-size:13px;color:var(--clay);letter-spacing:0.02em;margin-bottom:11px;padding-bottom:9px;border-bottom:1px dashed rgba(122,65,45,0.18);display:flex;align-items:center;gap:7px;}
+
+.sc-title{font-family:'Fraunces','Iowan Old Style','Georgia','Times New Roman',serif;font-size:13px;color:var(--clay);letter-spacing:0.02em;margin-bottom:11px;padding-bottom:9px;border-bottom:1px dashed rgba(122,65,45,0.18);display:flex;align-items:center;gap:7px;}
+
 .sc-title svg{width:14px;height:14px;}
+
 .sc-grid{display:grid;grid-template-columns:1fr;gap:6px;margin-bottom:12px;}
+
 .sc-row{display:flex;justify-content:space-between;align-items:baseline;font-size:11.5px;gap:12px;}
+
 .sc-key{color:var(--muted);letter-spacing:0.02em;white-space:nowrap;}
+
 .sc-val{color:var(--ink);font-weight:500;text-align:right;}
+
 .sc-val.ok::before{content:'✓ ';color:#4A6340;}
+
 .sc-val.warn::before{content:'◌ ';color:#8E6310;}
+
 .sc-val.bad::before{content:'✕ ';color:#8B3A1A;}
+
 .sc-status-row{display:flex;align-items:center;padding-top:10px;border-top:1px solid rgba(122,65,45,0.12);margin-top:4px;}
+
 .sc-status-block{flex:1;text-align:left;}
+
 .sc-status-label{font-size:8.5px;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase;}
-.sc-status-val{font-family:'Fraunces',serif;font-size:14px;color:var(--clay);margin-top:2px;}
+
+.sc-status-val{font-family:'Fraunces','Iowan Old Style','Georgia','Times New Roman',serif;font-size:14px;color:var(--clay);margin-top:2px;}
+
 .sc-action{margin-top:11px;padding:9px 12px;background:var(--almond);border-radius:8px;font-size:11px;color:var(--clay-deep);letter-spacing:0.01em;line-height:1.5;}
+
 .qr-wrap{padding-left:41px;display:flex;flex-wrap:wrap;gap:6px;margin-top:-4px;}
-.qr{font-size:11.5px;font-family:'DM Sans',sans-serif;font-weight:500;padding:8px 14px;border-radius:22px;border:1px solid var(--cinnamon);color:var(--clay);background:transparent;cursor:pointer;transition:all 0.18s ease;letter-spacing:0.005em;text-align:left;}
+
+.qr{font-size:11.5px;font-family:'DM Sans','-apple-system','BlinkMacSystemFont','Segoe UI','Roboto','Helvetica Neue',sans-serif;font-weight:500;padding:8px 14px;border-radius:22px;border:1px solid var(--cinnamon);color:var(--clay);background:transparent;cursor:pointer;transition:all 0.18s ease;letter-spacing:0.005em;text-align:left;}
+
 .qr:hover{background:var(--clay);color:var(--almond);border-color:var(--clay);transform:translateY(-1px);}
+
 .qr.danger{border-color:#C26B4A;color:#8B3A1A;}
+
 .qr.danger:hover{background:#8B3A1A;color:#fff;border-color:#8B3A1A;}
+
 .typing-dots{display:flex;gap:4px;align-items:center;padding:14px 16px;}
+
 .typing-dots span{width:6px;height:6px;border-radius:50%;background:var(--cinnamon);animation:blink 1.2s infinite;}
+
 .typing-dots span:nth-child(2){animation-delay:0.18s;}
+
 .typing-dots span:nth-child(3){animation-delay:0.36s;}
+
 @keyframes blink{0%,60%,100%{opacity:0.3}30%{opacity:1}}
+
 .input-row{display:flex;gap:9px;padding:14px 16px;border-top:1px solid rgba(122,65,45,0.08);background:#fff;align-items:center;}
-#user-input{flex:1;font-size:13px;font-family:'DM Sans',sans-serif;padding:10px 16px;border-radius:22px;border:1px solid rgba(122,65,45,0.18);background:var(--parchment);color:var(--ink);outline:none;transition:border-color 0.2s,background 0.2s;}
+
+#user-input{flex:1;font-size:13px;font-family:'DM Sans','-apple-system','BlinkMacSystemFont','Segoe UI','Roboto','Helvetica Neue',sans-serif;padding:10px 16px;border-radius:22px;border:1px solid rgba(122,65,45,0.18);background:var(--parchment);color:var(--ink);outline:none;transition:border-color 0.2s,background 0.2s;}
+
 #user-input:focus{border-color:var(--cinnamon);background:#fff;}
+
 #user-input::placeholder{color:var(--muted);}
+
 #send-btn{width:40px;height:40px;border-radius:50%;background:var(--clay);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.18s,transform 0.1s;flex-shrink:0;}
+
 #send-btn:hover{background:var(--cinnamon);}
+
 #send-btn:active{transform:scale(0.92);}
+
 #send-btn svg{width:16px;height:16px;}
+
 .footer-note{text-align:center;font-size:9px;color:var(--muted);padding:10px 16px 14px;background:#fff;border-top:1px solid rgba(122,65,45,0.05);letter-spacing:0.12em;text-transform:uppercase;font-weight:500;}
+
 .footer-note span{color:var(--cinnamon);font-weight:600;}
+
 @media(max-width:460px){.shell{border-radius:20px;}#messages{height:420px;}.trust-ribbon{padding:6px 10px;gap:6px;}.trust-item{font-size:8px;}}
+
 </style>
+
 </head>
+
 <body>
+
 <div class="shell">
+
   <div class="header">
+
     <div class="logo-ring">
+
       <svg viewBox="0 0 32 32" fill="none">
+
         <circle cx="16" cy="16" r="3.6" fill="#F0DAC3"/>
+
         <circle cx="16" cy="6" r="1.9" fill="#DBBC9D"/><circle cx="16" cy="26" r="1.9" fill="#DBBC9D"/>
+
         <circle cx="6" cy="16" r="1.9" fill="#DBBC9D"/><circle cx="26" cy="16" r="1.9" fill="#DBBC9D"/>
+
         <circle cx="9" cy="9" r="1.3" fill="#B17253"/><circle cx="23" cy="9" r="1.3" fill="#B17253"/>
+
         <circle cx="9" cy="23" r="1.3" fill="#B17253"/><circle cx="23" cy="23" r="1.3" fill="#B17253"/>
+
         <line x1="16" y1="8" x2="16" y2="13" stroke="#DBBC9D" stroke-width="0.7"/>
+
         <line x1="16" y1="19" x2="16" y2="24" stroke="#DBBC9D" stroke-width="0.7"/>
+
         <line x1="8" y1="16" x2="13" y2="16" stroke="#DBBC9D" stroke-width="0.7"/>
+
         <line x1="19" y1="16" x2="24" y2="16" stroke="#DBBC9D" stroke-width="0.7"/>
+
       </svg>
+
     </div>
+
     <div class="hinfo">
+
       <div class="hname">Cellular Institute</div>
+
       <div class="hsub">Cancun · Advanced Regenerative Medicine</div>
+
       <div class="hstatus"><span class="dot"></span>AI Coordinator · 24/7</div>
+
     </div>
+
   </div>
+
   <div class="trust-ribbon">
-    <span class="trust-item">Cellgenic Lab</span><span class="trust-divider"></span>
-    <span class="trust-item">COFEPRIS</span><span class="trust-divider"></span>
-    <span class="trust-item">ISSCA</span><span class="trust-divider"></span>
+
+    <span class="trust-item">Cellgenic Lab</span>
+
+    <span class="trust-divider"></span>
+
+    <span class="trust-item">COFEPRIS</span>
+
+    <span class="trust-divider"></span>
+
+    <span class="trust-item">ISSCA</span>
+
+    <span class="trust-divider"></span>
+
     <span class="trust-item">15+ Years</span>
+
   </div>
+
   <div class="prog-bar">
+
     <div class="prog-step active" id="p1"></div>
+
     <div class="prog-step" id="p2"></div>
+
     <div class="prog-step" id="p3"></div>
+
     <div class="prog-step" id="p4"></div>
+
     <div class="prog-step" id="p5"></div>
+
     <span class="prog-label" id="prog-label">Welcome</span>
+
   </div>
+
   <div id="messages"></div>
+
   <div class="input-row">
+
     <input id="user-input" type="text" placeholder="Type your message...">
+
     <button id="send-btn" aria-label="Send">
+
       <svg viewBox="0 0 24 24" fill="none" stroke="#F0DAC3" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/>
+
+        <line x1="12" y1="19" x2="12" y2="5"/>
+
+        <polyline points="5 12 12 5 19 12"/>
+
       </svg>
+
     </button>
+
   </div>
-  <div class="footer-note">Patient Coordinator · <span>CI AI System</span></div>
+
+  <div class="footer-note">Patient Coordinator · <span>CI AI System · v2</span></div>
+
 </div>
+
 <script>
-const WEBHOOK_URL = 'https://hook.us2.make.com/vqynim7s8v6jwd92bq4qitsh1c6u5hcq';
+
 const msgs = document.getElementById('messages');
+
 const inp  = document.getElementById('user-input');
+
 const btn  = document.getElementById('send-btn');
 
-function getUrlParam(name){const u=new URLSearchParams(window.location.search);return u.get(name)||'';}
+// ─── LEAD OBJECT (v2 — simplified) ──────────────────────────────────────────────
 
 const lead = {
-  segment:'',name:'',country:'',forWhom:'self',patientRelation:'',
-  conditionCategory:'',conditionDetail:'',diagnosis:'',duration:'',priorTx:'',
-  travel:'',passport:'',budget:'',records:'',timeline:'',decision:'',
-  wellnessInterest:'',wellnessLocation:'',wellnessTiming:'',
-  physicianSpecialty:'',physicianInterest:'',
-  contact:'',contactDetail:'',freeQ:'',
-  conditionFit:0,travelScore:0,budgetScore:0,recordsScore:0,timelineScore:0,decisionScore:0,engagementScore:5,
-  doctorReview:false,hardFail:null,
-  manychatRef:getUrlParam('ref')||getUrlParam('subscriber_id')||'',
-  source:'CI Chatbot'
+
+  segment:'',
+
+  name:'',
+
+  forWhom:'self',
+
+  conditionCategory:'',
+
+  travel:'',
+
+  budget:'',
+
+  timeline:'',
+
+  wellnessInterest:'',
+
+  wellnessTiming:'',
+
+  physicianSpecialty:'',
+
+  physicianInterest:'',
+
+  phone:'',
+
+  email:'',
+
+  // scoring
+
+  conditionFit:0,
+
+  travelScore:0,
+
+  budgetScore:0,
+
+  timelineScore:0,
+
+  engagementScore:5,
+
+  // flags
+
+  doctorReview:false,
+
+  hardFail:null
+
 };
-let currentStep='start',awaitingInput=null,webhookSent=false;
 
-function sendToHubSpot(){
-  if(webhookSent)return;
-  webhookSent=true;
-  try{
-    fetch(WEBHOOK_URL,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        name:lead.name,email:lead.contact==='Email'?lead.contactDetail:'',
-        phone:['WhatsApp','Phone'].includes(lead.contact)?lead.contactDetail:'',
-        country:lead.country,segment:lead.segment,conditionCategory:lead.conditionCategory,
-        conditionDetail:lead.conditionDetail,diagnosis:lead.diagnosis,duration:lead.duration,
-        priorTx:lead.priorTx,travel:lead.travel,passport:lead.passport,
-        budget:lead.budget,records:lead.records,timeline:lead.timeline,
-        decision:lead.decision,contact:lead.contact,contactDetail:lead.contactDetail,
-        wellnessInterest:lead.wellnessInterest,wellnessLocation:lead.wellnessLocation,
-        wellnessTiming:lead.wellnessTiming,physicianSpecialty:lead.physicianSpecialty,
-        physicianInterest:lead.physicianInterest,manychatRef:lead.manychatRef,source:lead.source,
-        leadScore:totalScore(),leadStatus:leadStatus()
-      })
-    }).catch(()=>{});
-  }catch(e){}
-}
+let currentStep='start',awaitingInput=null;
 
-function totalScore(){return lead.conditionFit+lead.travelScore+lead.budgetScore+lead.recordsScore+lead.timelineScore+lead.decisionScore+lead.engagementScore;}
+// ─── BACKSTAGE — internal lead routing (never shown to patient) ──────────────────────
+
+function totalScore(){return lead.conditionFit+lead.travelScore+lead.budgetScore+lead.timelineScore+lead.engagementScore;}
+
 function leadStatus(){
+
   if(lead.segment==='wellness')return 'wellness';
+
   if(lead.segment==='physician')return 'physician';
+
   if(lead.hardFail)return 'unq';
+
   if(lead.doctorReview)return 'doctor';
+
   const s=totalScore();
-  if(s>=80)return 'hot';if(s>=60)return 'warm';if(s>=40)return 'cold';return 'unq';
+
+  if(s>=65)return 'hot';
+
+  if(s>=40)return 'warm';
+
+  if(s>=20)return 'cold';
+
+  return 'unq';
+
 }
+
+// ────────────────────────────────────────────────────────────────────────────
 
 function setProgress(s){
-  const labels=['Welcome','Identity','Condition','Logistics','Investment','Qualification'];
+
+  const labels=['','Welcome','Who','Condition','Travel','Investment'];
+
   for(let i=1;i<=5;i++){
+
     const el=document.getElementById('p'+i);
+
     if(i<s)el.className='prog-step done';
+
     else if(i===s)el.className='prog-step active';
+
     else el.className='prog-step';
+
   }
+
   document.getElementById('prog-label').textContent=labels[s]||'Qualification';
+
 }
 
 const steps={
-  start:{text:"Hello, welcome to <strong>Cellular Institute</strong>.\n\n<em>Advanced Regenerative Medicine in Cancun, Mexico.</em>\n<div class='quote'>We don't sell stem cells. We guide each patient through a personalized regenerative medicine experience built around quality, science, safety, and care.</div>\n<div class='disclaimer'>This chat isn't medical advice and doesn't replace a consultation. My role is to understand your case and guide you to the next responsible step.</div>\nIs it OK if I ask you a few brief questions?",options:{'Yes, go ahead':{next:'segment_select'},'What do you do?':{next:'overview'},'Not right now':{next:'exit_consent'}},prog:0},
-  overview:{text:"Cellular Institute is a premium regenerative medicine and longevity destination. What sets us apart:\n\n• <strong>Cellgenic</strong> — in-house lab with fresh cells, xeno-free, hypoxia, documented COA\n• <strong>Integrated protocol</strong> — biologics · peptides · ozone/EBOO · HBOT · red light · PEMF · diagnostics\n• <strong>Cancun</strong> as a medical destination with on-site guest house and concierge care\n• Backed by <em>ISSCA / Global Stem Cells Group</em>\n<div class='quote'>Not just a treatment. A complete regenerative experience.</div>\nShall we continue so I can understand your case?",options:{'Yes, continue':{next:'segment_select'},'I have another question':{next:'free_question'}},prog:0},
-  free_question:{text:"Go ahead, type your question.",expectInput:{field:'freeQ',next:'after_question'},prog:0},
-  after_question:{text:"Thanks. To answer with the depth your question deserves, it's best for a clinical coordinator to review it. Shall we continue?",options:{'Yes, continue':{next:'segment_select'},'Not right now':{next:'exit_consent'}},prog:0},
+
+  start:{
+
+    text:"Hello, welcome to <strong>Cellular Institute</strong>.\n\n<em>Advanced Regenerative Medicine in Cancun, Mexico.</em>\n<div class='quote'>We don't sell stem cells. We guide each patient through a personalized regenerative medicine experience built around quality, science, safety, and care.</div>\n<div class='disclaimer'>This chat isn't medical advice and doesn't replace a consultation. My role is to understand your case and guide you to the next responsible step.</div>\nIs it OK if I ask you a few brief questions?",
+
+    options:{'Yes, go ahead':{next:'segment_select'},'What do you do?':{next:'overview'},'Not right now':{next:'exit_consent'}},
+
+    prog:0
+
+  },
+
+  overview:{
+
+    text:"Cellular Institute is a premium regenerative medicine and longevity destination. What sets us apart:\n\n• <strong>Cellgenic</strong> — in-house lab with fresh cells, xeno-free, hypoxia, documented COA\n• <strong>Integrated protocol</strong> — biologics · peptides · ozone/EBOO · HBOT · red light · PEMF · diagnostics\n• <strong>Cancun</strong> as a medical destination with on-site guest house and concierge care\n• Backed by <em>ISSCA / Global Stem Cells Group</em>\n<div class='quote'>Not just a treatment. A complete regenerative experience.</div>\nShall we continue so I can understand your case?",
+
+    options:{'Yes, continue':{next:'segment_select'}},
+
+    prog:0
+
+  },
+
   exit_consent:{text:"Of course. We're here whenever you're ready.\n\n<em>Cellular Institute · Cancun</em>",options:{},prog:0},
-  segment_select:{text:"To guide you better: <strong>which of these describes your situation?</strong>",options:{"I'm looking for treatment for myself":{next:'name',set:{segment:'patient',forWhom:'self'}},"Support for a family member (parent)":{next:'caregiver_relation',set:{segment:'caregiver',forWhom:'family'}},"I'm an athlete — recovery / performance":{next:'name',set:{segment:'athlete',forWhom:'self'}},"Local wellness in Cancun (HBOT, IV, peptides)":{next:'wellness_intro',set:{segment:'wellness'}},"I'm a physician — ISSCA training / partnership":{next:'physician_intro',set:{segment:'physician'}}},prog:1},
-  caregiver_relation:{text:"How generous of you to seek support for your family member.\n<div class='quote'>Give your parents the chance to feel supported, cared for, and optimized with a personalized protocol.</div>\n<strong>What's your relationship to the person?</strong>",options:{'Son/daughter':{next:'name',set:{patientRelation:'Son/Daughter'}},'Spouse':{next:'name',set:{patientRelation:'Spouse'}},'Other family member / caregiver':{next:'name',set:{patientRelation:'Other family'}}},prog:1},
-  name:{text:"Great. What's your name?",expectInput:{field:'name',next:'country'},prog:1},
-  country:{text:"Nice to meet you, $name. Where are you contacting us from?",options:{'US / Canada':{next:'condition_router',set:{country:'US/Canada'}},'Europe':{next:'condition_router',set:{country:'Europe'}},'Mexico':{next:'condition_router',set:{country:'Mexico'}},'Other country':{next:'condition_router',set:{country:'Other'}}},prog:1},
-  condition_router:{options:{},prog:2},
-  condition:{text:"$personRef <strong>what's the main health condition or goal?</strong>",options:{'Joint pain / orthopedic':{next:'cond_ortho',set:{conditionCategory:'Orthopedic'},score:{conditionFit:20}},'Longevity / wellness':{next:'cond_long',set:{conditionCategory:'Longevity'},score:{conditionFit:20}},'Neurological':{next:'cond_neuro',set:{conditionCategory:'Neurological'},score:{conditionFit:20},flag:{doctorReview:true}},'Autoimmune / inflammatory':{next:'cond_auto',set:{conditionCategory:'Autoimmune'},score:{conditionFit:20},flag:{doctorReview:true}},'Pulmonary / cardiovascular':{next:'cond_pulm',set:{conditionCategory:'Pulmonary/CV'},score:{conditionFit:20},flag:{doctorReview:true}},'Senior wellness — vitality':{next:'cond_senior',set:{conditionCategory:'Senior Wellness'},score:{conditionFit:20}},'Aesthetic / hair':{next:'cond_aest',set:{conditionCategory:'Aesthetic'},score:{conditionFit:10}},'Other condition':{next:'cond_other',set:{conditionCategory:'Other'},score:{conditionFit:10}}},prog:2},
-  athlete_sport:{text:"Awesome, $name. <strong>What sport do you do?</strong>",options:{'BJJ / Grappling':{next:'athlete_goal',set:{conditionDetail:'BJJ'}},'Hyrox / CrossFit':{next:'athlete_goal',set:{conditionDetail:'Hyrox/CF'}},'Gym / strength':{next:'athlete_goal',set:{conditionDetail:'Gym'}},'Running / endurance':{next:'athlete_goal',set:{conditionDetail:'Endurance'}},'Other sport':{next:'athlete_goal',set:{conditionDetail:'Other sport'}}},prog:2},
-  athlete_goal:{text:"<strong>What's your main focus?</strong>",options:{'Specific injury (knee / shoulder / back)':{next:'cond_ortho_athlete',set:{conditionCategory:'Sports injury'},score:{conditionFit:20}},'Recovery / inflammation':{next:'diagnosis',set:{conditionCategory:'Recovery'},score:{conditionFit:18}},'Performance / athletic longevity':{next:'diagnosis',set:{conditionCategory:'Performance'},score:{conditionFit:18}},'Injury prevention':{next:'diagnosis',set:{conditionCategory:'Prevention'},score:{conditionFit:15}}},prog:2},
-  cond_ortho_athlete:{text:"<strong>What's the specific area?</strong>",options:{'Knee':{next:'diagnosis',set:{conditionDetail:'Knee'}},'Shoulder':{next:'diagnosis',set:{conditionDetail:'Shoulder'}},'Back / neck':{next:'diagnosis',set:{conditionDetail:'Back'}},'Hip':{next:'diagnosis',set:{conditionDetail:'Hip'}},'Other area':{next:'diagnosis',set:{conditionDetail:'Other area'}}},prog:2},
-  cond_ortho:{text:"This is one of our most experienced clinical areas. Protocols may include <strong>UC-MSCs</strong>, guided intra-articular injections, exosomes and PRP, combined with HBOT and red light therapy.\n\n<strong>What's the specific condition?</strong>",options:{'Arthrosis / osteoarthritis':{next:'diagnosis',set:{conditionDetail:'Arthrosis'}},'Meniscus / ligament':{next:'diagnosis',set:{conditionDetail:'Meniscus/Ligament'}},'Sports injury':{next:'diagnosis',set:{conditionDetail:'Sports injury'}},'Chronic pain / back':{next:'diagnosis',set:{conditionDetail:'Chronic pain'}}},prog:2},
-  cond_long:{text:"Excellent. The longevity program combines <strong>NK cells</strong>, IV exosomes, MUSE cells, pharmaceutical peptides, hormone optimization, and an AI biomarker tracking platform.\n\n<strong>What's your main focus?</strong>",options:{'Anti-aging / vitality':{next:'diagnosis',set:{conditionDetail:'Anti-aging'}},'Executive optimization':{next:'diagnosis',set:{conditionDetail:'Optimization'}},'Metabolic / weight':{next:'diagnosis',set:{conditionDetail:'Metabolic'}},'Immune / energy':{next:'diagnosis',set:{conditionDetail:'Immune/Energy'}}},prog:2},
-  cond_neuro:{text:"Every neurological case is highly individual and warrants <em>detailed medical review</em>. Protocols may include UC-MSCs, MUSE cells, exosomes, HBOT, and hydrogen therapy.\n\n<strong>What's the specific condition?</strong>",options:{"Parkinson's":{next:'diagnosis',set:{conditionDetail:"Parkinson's"}},'Multiple sclerosis':{next:'diagnosis',set:{conditionDetail:'MS'}},'Brain injury / stroke':{next:'diagnosis',set:{conditionDetail:'Stroke/TBI'}},'Neuropathy':{next:'diagnosis',set:{conditionDetail:'Neuropathy'}}},prog:2},
-  cond_auto:{text:"Autoimmune conditions <em>require careful medical review</em> before any estimate. Medical records will be especially important.\n\n<strong>What's the condition?</strong>",options:{'Rheumatoid arthritis':{next:'diagnosis',set:{conditionDetail:'RA'}},'Lupus':{next:'diagnosis',set:{conditionDetail:'Lupus'}},"IBD / Crohn's":{next:'diagnosis',set:{conditionDetail:'IBD'}},'Other autoimmune':{next:'diagnosis',set:{conditionDetail:'Other autoimmune'}}},prog:2},
-  cond_pulm:{text:"Pulmonary and cardiovascular conditions <em>require mandatory medical review</em> before discussing options, for safety reasons.\n\n<strong>What's the area?</strong>",options:{'Pulmonary (COPD, fibrosis)':{next:'diagnosis',set:{conditionDetail:'Pulmonary'}},'Cardiovascular':{next:'diagnosis',set:{conditionDetail:'Cardiovascular'}},'Vascular / circulation':{next:'diagnosis',set:{conditionDetail:'Vascular'}}},prog:2},
-  cond_senior:{text:"We have a dedicated <strong>Senior Wellness Program</strong> designed to support immunity, cognition, mobility, pulmonary vitality, and energy in older patients.\n\nProtocols may include MSCs, NK cells, exosomes, HBOT, IV therapy, peptides, and hormone optimization.\n\n<strong>What's the main focus?</strong>",options:{'General vitality / energy':{next:'diagnosis',set:{conditionDetail:'Senior vitality'}},'Immune support':{next:'diagnosis',set:{conditionDetail:'Senior immune'}},'Cognitive function':{next:'diagnosis',set:{conditionDetail:'Cognitive'}},'Mobility / joints':{next:'diagnosis',set:{conditionDetail:'Senior mobility'}}},prog:2},
-  cond_aest:{text:"For aesthetic and hair: topical exosomes, PRP, red light, peptides, and hair restoration (FUE).\n\n<strong>What are you interested in?</strong>",options:{'Skin / facial':{next:'diagnosis',set:{conditionDetail:'Skin'}},'Hair / FUE':{next:'diagnosis',set:{conditionDetail:'Hair'}},'Wellness / IV / recovery':{next:'wellness_intro',set:{segment:'wellness',conditionDetail:'Wellness'}}},prog:2},
-  cond_other:{text:"Before we continue — for safety: does the condition include any of the following <strong>acute or high-risk conditions</strong>?\n\n<em>Active cancer, severe infection, unstable acute condition, pregnancy.</em>",options:{'No, none of those':{next:'cond_other_describe'},'Yes, active cancer':{next:'fail_safety',flag:{hardFail:'safety'}},'Yes, another acute condition':{next:'fail_safety',flag:{hardFail:'safety'}}},prog:2},
-  cond_other_describe:{text:"Thanks. Please briefly describe the condition or goal:",expectInput:{field:'conditionDetail',next:'diagnosis'},prog:2},
-  fail_safety:{text:"Thanks for sharing this, $name. For <strong>safety reasons</strong>, we can't proceed with a regenerative evaluation for active acute conditions, ongoing oncology, or unstable cases.\n\nThese cases require specialized medical care that's outside the scope of our protocols. I wish you the very best in your medical journey.",options:{},prog:1,summary:true,sendWebhook:true},
-  diagnosis:{text:"<strong>$Q_diagnosis</strong>",options:{'Yes, formal diagnosis':{next:'duration',set:{diagnosis:'Yes'}},'No formal, but clear symptoms':{next:'duration',set:{diagnosis:'No formal'}},'Still investigating':{next:'duration',set:{diagnosis:'Investigating'}}},prog:2},
-  duration:{text:"<strong>$Q_duration</strong>",options:{'Less than 3 months':{next:'prior_tx',set:{duration:'<3 months'}},'3 to 12 months':{next:'prior_tx',set:{duration:'3-12 months'}},'1 to 5 years':{next:'prior_tx',set:{duration:'1-5 years'}},'More than 5 years':{next:'prior_tx',set:{duration:'5+ years'}}},prog:2},
-  prior_tx:{text:"<strong>$Q_priortx</strong>",options:{'Medications':{next:'travel',set:{priorTx:'Medications'}},'Surgery':{next:'travel',set:{priorTx:'Surgery'}},'Physical therapy / injections':{next:'travel',set:{priorTx:'PT/Injections'}},'Several of the above':{next:'travel',set:{priorTx:'Multiple'}},'Nothing yet':{next:'travel',set:{priorTx:'None'}}},prog:2},
-  travel:{text:"Important point: our core cellular protocols are administered <em>in-person in Cancun</em> with fresh cells from the lab. We coordinate airport pickup, guest house, and recovery by the sea.\n<div class='quote'>The experience is part of the outcome.</div>\n<strong>$Q_travel</strong>",options:{'Yes, valid passport':{next:'budget',set:{travel:'Yes',passport:'Valid'},score:{travelScore:20}},'Yes, need to renew passport':{next:'budget',set:{travel:'Yes',passport:'Renew'},score:{travelScore:18}},'Need to arrange it':{next:'budget',set:{travel:'Maybe',passport:'TBD'},score:{travelScore:10}},"Can't travel":{next:'fail_travel',set:{travel:'No'},flag:{hardFail:'travel'}}},prog:3},
-  fail_travel:{text:"Understood. Our core cellular protocols require being on-site in Cancun, so for now they aren't a fit.\n\nIf you'd like, we also offer educational content or our local Recovery Menu. What would you prefer?",options:{'Tell me about the Recovery Menu':{next:'wellness_intro',set:{segment:'wellness'}},'Send me educational content':{next:'contact_capture'},'Understood, thanks':{next:'end_polite'}},prog:3,summary:true,sendWebhook:true},
-  budget:{text:"Key point: our protocols are <strong>cash-based</strong> (we don't accept insurance). Typical investment ranges from <strong>$5,000 to $25,000+ USD</strong> depending on the personalized protocol.\n\nIt includes fresh Cellgenic cells, medical oversight, diagnostics, recovery technologies (HBOT, red light, EBOO), and concierge care in Cancun.\n\n<strong>$Q_budget</strong>",options:{'Yes, I understand and have the budget':{next:'records',set:{budget:'Yes confirmed'},score:{budgetScore:20}},'I need more cost details':{next:'budget_info',set:{budget:'Needs info'},score:{budgetScore:12}},'I have a limited budget':{next:'records',set:{budget:'Limited'},score:{budgetScore:8}},"I can't afford it":{next:'fail_budget',set:{budget:'No'},flag:{hardFail:'budget'}}},prog:4},
-  budget_info:{text:"Of course. Indicative ranges:\n\n• Full protocols: <strong>$5,000 – $25,000+ USD</strong>\n• Exosome sessions: about <strong>$1,500 USD</strong>\n• Stem cells: about <strong>$75 USD per million cells</strong>\n• Local Recovery Menu (HBOT, IV, peptides): lower ticket\n\n<em>The exact cost is only set after medical review.</em>\n\n<strong>Comfortable moving forward?</strong>",options:{'Yes, I understand':{next:'records',set:{budget:'Yes (with info)'},score:{budgetScore:18}},'I need to think about it':{next:'records',set:{budget:'Considering'},score:{budgetScore:10}},'Tell me about the Recovery Menu':{next:'wellness_intro',set:{segment:'wellness'}},"It's outside my budget":{next:'fail_budget',set:{budget:'Out of budget'},flag:{hardFail:'budget'}}},prog:4},
-  fail_budget:{text:"I appreciate your honesty. The main regenerative protocol requires a significant investment.\n\nIf you're interested, our local Recovery Menu may be a good alternative, or we can send you educational content.",options:{'Tell me about the Recovery Menu':{next:'wellness_intro',set:{segment:'wellness'}},'Send me educational content':{next:'contact_capture'},'Understood, thanks':{next:'end_polite'}},prog:4,summary:true,sendWebhook:true},
-  records:{text:"For the medical team to review the case seriously we need clinical history: <em>MRI, labs, diagnosis, medications, recent imaging</em>.\n\n<strong>$Q_records</strong>",options:{'Yes, recent records available':{next:'timeline',set:{records:'Yes'},score:{recordsScore:15}},'I can request them from the doctor':{next:'timeline',set:{records:'Can request'},score:{recordsScore:8}},"I don't have records":{next:'timeline',set:{records:'No'},score:{recordsScore:0}}},prog:4},
-  timeline:{text:"<strong>$Q_qualify_when</strong>",options:{'As soon as possible':{next:'decision',set:{timeline:'Immediate'},score:{timelineScore:10}},'Within 30 days':{next:'decision',set:{timeline:'30 days'},score:{timelineScore:10}},'In 1-3 months':{next:'decision',set:{timeline:'1-3 months'},score:{timelineScore:6}},'Later / just exploring':{next:'decision',set:{timeline:'3+ months'},score:{timelineScore:2}}},prog:4},
-  decision:{text:"Last question: <strong>who's involved in the decision?</strong>",options:{'I decide':{next:'final',set:{decision:'Self'},score:{decisionScore:10}},'I decide with partner / family':{next:'final',set:{decision:'Family'},score:{decisionScore:10}},'Family member decides with me':{next:'final',set:{decision:'Family'},score:{decisionScore:10}},'Just researching':{next:'final',set:{decision:'Researching'},score:{decisionScore:2}}},prog:5},
-  final:{text:"Thanks for the info, $name. Let me put together a quick summary and the next responsible step…",options:{},prog:5,summary:true,chain:'final_handoff'},
+
+  segment_select:{
+
+    text:"To guide you better: <strong>which of these describes your situation?</strong>",
+
+    options:{
+
+      "I'm looking for treatment for myself":{next:'name',set:{segment:'patient',forWhom:'self'}},
+
+      "Support for a family member (parent)":{next:'name',set:{segment:'caregiver',forWhom:'family'}},
+
+      "I'm an athlete — recovery / performance":{next:'name',set:{segment:'athlete',forWhom:'self'}},
+
+      "Local wellness in Cancun (HBOT, IV, peptides)":{next:'wellness_intro',set:{segment:'wellness'}},
+
+      "I'm a physician — ISSCA training / partnership":{next:'physician_intro',set:{segment:'physician'}}
+
+    },
+
+    prog:1
+
+  },
+
+  name:{text:"Great. What's your name?",expectInput:{field:'name',next:'condition'},prog:1},
+
+  condition:{
+
+    text:"<strong>\$personRef what's the main condition or goal?</strong>",
+
+    options:{
+
+      'Joint / orthopedic pain':        {next:'travel',set:{conditionCategory:'Orthopedic'},   score:{conditionFit:20}},
+
+      'Neurological condition':         {next:'travel',set:{conditionCategory:'Neurological'}, score:{conditionFit:20},flag:{doctorReview:true}},
+
+      'Autoimmune / inflammatory':      {next:'travel',set:{conditionCategory:'Autoimmune'},   score:{conditionFit:20},flag:{doctorReview:true}},
+
+      'Longevity / anti-aging':         {next:'travel',set:{conditionCategory:'Longevity'},    score:{conditionFit:20}},
+
+      'Pulmonary / cardiovascular':     {next:'travel',set:{conditionCategory:'Pulmonary/CV'}, score:{conditionFit:18},flag:{doctorReview:true}},
+
+      'Athletic recovery / performance':{next:'travel',set:{conditionCategory:'Sports'},       score:{conditionFit:18}},
+
+      'Senior wellness / vitality':     {next:'travel',set:{conditionCategory:'Senior Wellness'},score:{conditionFit:18}},
+
+      'Aesthetic / hair':               {next:'travel',set:{conditionCategory:'Aesthetic'},    score:{conditionFit:10}},
+
+      'Other condition':                {next:'cond_safety_check',set:{conditionCategory:'Other'},score:{conditionFit:10}}
+
+    },
+
+    prog:2
+
+  },
+
+  cond_safety_check:{
+
+    text:"Quick safety check: does the condition involve any of the following?\n\n<em>Active cancer, severe infection, unstable acute condition, or pregnancy.</em>",
+
+    options:{
+
+      'None of those':    {next:'travel'},
+
+      'Yes, one of those':{next:'fail_safety',flag:{hardFail:'safety'}}
+
+    },
+
+    prog:2
+
+  },
+
+  fail_safety:{
+
+    text:"Thanks for sharing this, \$name. For <strong>safety reasons</strong>, we can't proceed with a regenerative evaluation for active acute conditions, ongoing oncology, or unstable cases.\n\nThese cases require specialized medical care that's outside the scope of our protocols. I wish you the very best in your medical journey.",
+
+    options:{},prog:2,summary:true
+
+  },
+
+  travel:{
+
+    text:"Important point: our core cellular protocols are administered <em>in-person in Cancun</em> with fresh cells from the lab. We coordinate airport pickup, guest house, and recovery by the sea.\n<div class='quote'>The experience is part of the outcome.</div>\n<strong>Can you travel to Cancun?</strong>",
+
+    options:{
+
+      'Yes, valid passport':         {next:'budget',set:{travel:'Yes'},score:{travelScore:30}},
+
+      'Yes, need to renew passport': {next:'budget',set:{travel:'Yes — renew'},score:{travelScore:25}},
+
+      'Need to arrange it':          {next:'budget',set:{travel:'Maybe'},score:{travelScore:12}},
+
+      "Can't travel":                {next:'fail_travel',set:{travel:'No'},flag:{hardFail:'travel'}}
+
+    },
+
+    prog:3
+
+  },
+
+  fail_travel:{
+
+    text:"Understood. Our core cellular protocols require being on-site in Cancun, so for now they aren't a fit.\n\nIf you'd like, we also offer educational content or our local Recovery Menu. What would you prefer?",
+
+    options:{
+
+      'Tell me about the Recovery Menu':{next:'wellness_intro',set:{segment:'wellness'}},
+
+      'Send me educational content':{next:'contact_capture'},
+
+      'Understood, thanks':{next:'end_polite'}
+
+    },
+
+    prog:3,summary:true
+
+  },
+
+  budget:{
+
+    text:"Important to know: our protocols are an <strong>out-of-pocket expense</strong> — they are <strong>not covered by health insurance</strong> of any kind.\n\nThe exact cost is determined after medical review, based on your personalized protocol.\n\n<strong>Are you comfortable with an out-of-pocket procedure?</strong>",
+
+    options:{
+
+      'Yes, understood':                   {next:'timeline',set:{budget:'Yes confirmed'},score:{budgetScore:25}},
+
+      'I need to understand the cost first':{next:'timeline',set:{budget:'Needs info'},score:{budgetScore:15}},
+
+      'I need to check my options':        {next:'timeline',set:{budget:'Limited'},score:{budgetScore:8}},
+
+      'This is an issue for me':           {next:'fail_budget',set:{budget:'No'},flag:{hardFail:'budget'}}
+
+    },
+
+    prog:4
+
+  },
+
+  fail_budget:{
+
+    text:"I appreciate your honesty. The main regenerative protocol requires a significant investment.\n\nIf you're interested, our local Recovery Menu may be a good alternative, or we can send you educational content.",
+
+    options:{
+
+      'Tell me about the Recovery Menu':{next:'wellness_intro',set:{segment:'wellness'}},
+
+      'Send me educational content':{next:'contact_capture'},
+
+      'Understood, thanks':{next:'end_polite'}
+
+    },
+
+    prog:4,summary:true
+
+  },
+
+  timeline:{
+
+    text:"<strong>When would you like to move forward?</strong>",
+
+    options:{
+
+      'As soon as possible':  {next:'final',set:{timeline:'Immediate'},score:{timelineScore:10}},
+
+      'Within 30 days':       {next:'final',set:{timeline:'30 days'},score:{timelineScore:10}},
+
+      'In 1-3 months':        {next:'final',set:{timeline:'1-3 months'},score:{timelineScore:6}},
+
+      'Later / just exploring':{next:'final',set:{timeline:'3+ months'},score:{timelineScore:2}}
+
+    },
+
+    prog:4
+
+  },
+
+  final:{
+
+    text:"Thanks for the info, \$name. Let me put together a quick summary and the next responsible step…",
+
+    options:{},prog:5,summary:true,chain:'final_handoff'
+
+  },
+
   final_handoff:{options:{},prog:5},
-  contact_capture:{text:"What's the best way to reach you?",options:{'WhatsApp':{next:'capture_input',set:{contact:'WhatsApp'}},'Phone call':{next:'capture_input',set:{contact:'Phone'}},'Email':{next:'capture_input',set:{contact:'Email'}}},prog:5},
-  capture_input:{text:"Please share your contact info.\n\n<em>e.g., +1 555 000 0000 · maria@email.com</em>",expectInput:{field:'contactDetail',next:'end_handoff'},prog:5},
-  end_handoff:{text:"Done, $name! Your case is registered.\n\nA coordinator from <strong>Cellular Institute</strong> will reach out soon.\n<div class='quote'>We're here to understand your case and see if there's a responsible way to support you.</div>",options:{},prog:5,sendWebhook:true},
-  end_polite:{text:"Perfect. We're here whenever you're ready, $name.",options:{},prog:5,sendWebhook:true},
-  wellness_intro:{text:"Our <strong>Recovery & Wellness Menu</strong> in Cancun offers lower-ticket services — ideal for residents, expats, tourists, and athletes.\n\nIncludes: <em>HBOT, EBOO/EVO, IV therapy, pharmaceutical peptides, red light, PEMF, ozone, diagnostics.</em>\n\nWe also offer <strong>recurring memberships</strong> (Recovery, Longevity, HBOT, Executive).",options:{'Continue':{next:'wellness_name'}},prog:1},
-  wellness_name:{text:"What's your name?",expectInput:{field:'name',next:'wellness_location'},prog:1},
-  wellness_location:{text:"Nice to meet you, $name. <strong>Where are you?</strong>",options:{'I live in Cancun':{next:'wellness_interest',set:{wellnessLocation:'Local'}},'Visiting Cancun':{next:'wellness_interest',set:{wellnessLocation:'Tourist'}},'Planning to travel to Cancun':{next:'wellness_interest',set:{wellnessLocation:'Planning'}},"I'm an expat / foreign resident":{next:'wellness_interest',set:{wellnessLocation:'Expat'}}},prog:2},
-  wellness_interest:{text:"<strong>Which service are you most interested in?</strong>",options:{'HBOT (hyperbaric oxygen)':{next:'wellness_timing',set:{wellnessInterest:'HBOT'}},'IV therapy / vitamins':{next:'wellness_timing',set:{wellnessInterest:'IV'}},'Pharmaceutical peptides':{next:'wellness_timing',set:{wellnessInterest:'Peptides'}},'EBOO / EVO / ozone':{next:'wellness_timing',set:{wellnessInterest:'EBOO/Ozone'}},'Red light / PEMF / recovery':{next:'wellness_timing',set:{wellnessInterest:'Recovery tech'}},'Recurring membership':{next:'wellness_timing',set:{wellnessInterest:'Membership'}},'Diagnostics / labs':{next:'wellness_timing',set:{wellnessInterest:'Diagnostics'}}},prog:3},
-  wellness_timing:{text:"<strong>When would you like to book?</strong>",options:{'This week':{next:'wellness_final',set:{wellnessTiming:'This week'}},'This month':{next:'wellness_final',set:{wellnessTiming:'This month'}},'Just exploring':{next:'wellness_final',set:{wellnessTiming:'Exploring'}}},prog:4},
-  wellness_final:{text:"Perfect, $name. I'll log your request so a Recovery Menu coordinator can reach out with schedules, pricing, and, if you're interested, membership options.",options:{'Continue to contact':{next:'contact_capture'}},prog:5,summary:true,sendWebhook:true},
-  physician_intro:{text:"Welcome, doctor.\n\nThrough <em>ISSCA (International Society for Stem Cell Application)</em> and <em>Global Stem Cells Group</em>, we've been training physicians in regenerative medicine worldwide for <strong>15+ years</strong>.\n\nThe Cancun clinic functions as a <em>hands-on training center</em> with live procedures, advanced protocols, and access to the Cellgenic lab.",options:{'Continue':{next:'physician_name'}},prog:1},
-  physician_name:{text:"What's your full name, doctor?",expectInput:{field:'name',next:'physician_specialty'},prog:1},
-  physician_specialty:{text:"Nice to meet you, Dr. $name. <strong>What's your specialty?</strong>",options:{'Regenerative medicine / longevity':{next:'physician_country',set:{physicianSpecialty:'Regenerative'}},'Orthopedics / trauma':{next:'physician_country',set:{physicianSpecialty:'Orthopedics'}},'Internal / family medicine':{next:'physician_country',set:{physicianSpecialty:'Internal/Family'}},'Aesthetic / dermatology':{next:'physician_country',set:{physicianSpecialty:'Aesthetic'}},'Other specialty':{next:'physician_country',set:{physicianSpecialty:'Other'}}},prog:2},
-  physician_country:{text:"<strong>Which country are you contacting us from?</strong>",options:{'US / Canada':{next:'physician_interest',set:{country:'US/Canada'}},'Mexico':{next:'physician_interest',set:{country:'Mexico'}},'Latin America':{next:'physician_interest',set:{country:'LATAM'}},'Europe':{next:'physician_interest',set:{country:'Europe'}},'Other country':{next:'physician_interest',set:{country:'Other'}}},prog:3},
-  physician_interest:{text:"<strong>What's your primary interest?</strong>",options:{'ISSCA training / certification':{next:'physician_final',set:{physicianInterest:'ISSCA training'}},'Cellgenic distribution at my clinic':{next:'physician_final',set:{physicianInterest:'Cellgenic distribution'}},'Clinical partnership / referrals':{next:'physician_final',set:{physicianInterest:'Partnership'}},'Visit the clinic / shadowing':{next:'physician_final',set:{physicianInterest:'Visit/Shadowing'}},'General information':{next:'physician_final',set:{physicianInterest:'General info'}}},prog:4},
-  physician_final:{text:"Excellent, Dr. $name. I'll log your request so the <strong>ISSCA / Global Stem Cells Group</strong> team can reach out with info on programs, course schedules, commercial terms, and next steps.",options:{'Continue to contact':{next:'contact_capture'}},prog:5,summary:true,sendWebhook:true}
+
+  contact_capture:{
+
+    text:"Almost done — what's your <strong>phone number</strong>?\n\n<em>e.g., +1 555 000 0000</em>",
+
+    expectInput:{field:'phone',next:'capture_email'},
+
+    prog:5
+
+  },
+
+  capture_email:{
+
+    text:"And your <strong>email address</strong>?",
+
+    expectInput:{field:'email',next:'end_handoff'},
+
+    prog:5
+
+  },
+
+  end_handoff:{
+
+    text:"Done, \$name! Your case is registered.\n\nA coordinator from <strong>Cellular Institute</strong> will reach out to your phone and email shortly.\n<div class='quote'>We're here to see if there's a responsible way to support you.</div>",
+
+    options:{},prog:5
+
+  },
+
+  end_polite:{
+
+    text:"Perfect. We're here whenever you're ready, \$name.",
+
+    options:{},prog:5
+
+  },
+
+  wellness_intro:{
+
+    text:"Our <strong>Recovery & Wellness Menu</strong> in Cancun offers lower-ticket services — ideal for residents, expats, tourists, and athletes.\n\nIncludes: <em>HBOT, EBOO/EVO, IV therapy, pharmaceutical peptides, red light, PEMF, ozone, diagnostics.</em>\n\nWe also offer <strong>recurring memberships</strong> (Recovery, Longevity, HBOT, Executive).",
+
+    options:{'Continue':{next:'wellness_name'}},
+
+    prog:1
+
+  },
+
+  wellness_name:{
+
+    text:"What's your name?",
+
+    expectInput:{field:'name',next:'wellness_interest'},
+
+    prog:1
+
+  },
+
+  wellness_interest:{
+
+    text:"Nice to meet you, \$name. <strong>Which service are you most interested in?</strong>",
+
+    options:{
+
+      'HBOT (hyperbaric oxygen)':{next:'wellness_timing',set:{wellnessInterest:'HBOT'}},
+
+      'IV therapy / vitamins':{next:'wellness_timing',set:{wellnessInterest:'IV'}},
+
+      'Pharmaceutical peptides':{next:'wellness_timing',set:{wellnessInterest:'Peptides'}},
+
+      'EBOO / EVO / ozone':{next:'wellness_timing',set:{wellnessInterest:'EBOO/Ozone'}},
+
+      'Red light / PEMF / recovery':{next:'wellness_timing',set:{wellnessInterest:'Recovery tech'}},
+
+      'Recurring membership':{next:'wellness_timing',set:{wellnessInterest:'Membership'}},
+
+      'Diagnostics / labs':{next:'wellness_timing',set:{wellnessInterest:'Diagnostics'}}
+
+    },
+
+    prog:3
+
+  },
+
+  wellness_timing:{
+
+    text:"<strong>When would you like to book?</strong>",
+
+    options:{
+
+      'This week':    {next:'wellness_final',set:{wellnessTiming:'This week'}},
+
+      'This month':   {next:'wellness_final',set:{wellnessTiming:'This month'}},
+
+      'Just exploring':{next:'wellness_final',set:{wellnessTiming:'Exploring'}}
+
+    },
+
+    prog:4
+
+  },
+
+  wellness_final:{
+
+    text:"Perfect, \$name. I'll log your request so a Recovery Menu coordinator can reach out with schedules, pricing, and, if you're interested, membership options.",
+
+    options:{'Continue to contact':{next:'contact_capture'}},
+
+    prog:5,summary:true
+
+  },
+
+  physician_intro:{
+
+    text:"Welcome, doctor.\n\nThrough <em>ISSCA (International Society for Stem Cell Application)</em> and <em>Global Stem Cells Group</em>, we've been training physicians in regenerative medicine worldwide for <strong>15+ years</strong>.\n\nThe Cancun clinic functions as a <em>hands-on training center</em> with live procedures, advanced protocols, and access to the Cellgenic lab.",
+
+    options:{'Continue':{next:'physician_name'}},
+
+    prog:1
+
+  },
+
+  physician_name:{
+
+    text:"What's your full name, doctor?",
+
+    expectInput:{field:'name',next:'physician_specialty'},
+
+    prog:1
+
+  },
+
+  physician_specialty:{
+
+    text:"Nice to meet you, Dr. \$name. <strong>What's your specialty?</strong>",
+
+    options:{
+
+      'Regenerative medicine / longevity':{next:'physician_interest',set:{physicianSpecialty:'Regenerative'}},
+
+      'Orthopedics / trauma':             {next:'physician_interest',set:{physicianSpecialty:'Orthopedics'}},
+
+      'Internal / family medicine':       {next:'physician_interest',set:{physicianSpecialty:'Internal/Family'}},
+
+      'Aesthetic / dermatology':          {next:'physician_interest',set:{physicianSpecialty:'Aesthetic'}},
+
+      'Other specialty':                  {next:'physician_interest',set:{physicianSpecialty:'Other'}}
+
+    },
+
+    prog:2
+
+  },
+
+  physician_interest:{
+
+    text:"<strong>What's your primary interest?</strong>",
+
+    options:{
+
+      'ISSCA training / certification':{next:'physician_final',set:{physicianInterest:'ISSCA training'}},
+
+      'Cellgenic distribution at my clinic':{next:'physician_final',set:{physicianInterest:'Cellgenic distribution'}},
+
+      'Clinical partnership / referrals':{next:'physician_final',set:{physicianInterest:'Partnership'}},
+
+      'Visit the clinic / shadowing':{next:'physician_final',set:{physicianInterest:'Visit/Shadowing'}},
+
+      'General information':{next:'physician_final',set:{physicianInterest:'General info'}}
+
+    },
+
+    prog:4
+
+  },
+
+  physician_final:{
+
+    text:"Excellent, Dr. \$name. I'll log your request so the <strong>ISSCA / Global Stem Cells Group</strong> team can reach out with info on programs, course schedules, commercial terms, and next steps.",
+
+    options:{'Continue to contact':{next:'contact_capture'}},
+
+    prog:5,summary:true
+
+  }
+
 };
 
 function getPersonRefs(){
+
   if(lead.segment==='caregiver'){
-    return{personRef:`For your loved one (${lead.patientRelation||'the patient'})`,Q_diagnosis:'Does the patient have a formal medical diagnosis?',Q_duration:'How long has the patient had this?',Q_priortx:'What has the patient tried so far?',Q_travel:'Can the patient travel to Cancun?',Q_budget:'Is the patient comfortable with this model?',Q_records:'Does the patient have records available?',Q_qualify_when:'If the patient qualifies, when would they like to move forward?'};
+
+    return{personRef:'For your family member —'};
+
   }
-  return{personRef:'Tell me, $name —',Q_diagnosis:'Do you have a formal medical diagnosis?',Q_duration:'How long have you had this?',Q_priortx:'What have you tried so far?',Q_travel:'Can you travel to Cancun?',Q_budget:'Are you comfortable with this model?',Q_records:'Do you have records available?',Q_qualify_when:'If you qualify, when would you like to move forward?'};
+
+  return{personRef:'\$name —'};
+
 }
 
 function interpolate(text){
+
   if(!text)return '';
+
   const refs=getPersonRefs();
+
   let out=text.replace(/\$name/g,lead.name||'');
-  for(const k in refs){out=out.replace(new RegExp('\\$'+k,'g'),refs[k]);}
+
+  for(const k in refs){
+
+    out=out.replace(new RegExp('\\\$'+k,'g'),refs[k]);
+
+  }
+
+  out=out.replace(/\$name/g,lead.name||'');
+
   return out.replace(/\n/g,'<br>');
+
 }
 
 function applySetScoreFlag(opt){
+
   if(!opt)return;
+
   if(opt.set)Object.assign(lead,opt.set);
+
   if(opt.score){for(const k in opt.score)lead[k]=(lead[k]||0)+opt.score[k];}
+
   if(opt.flag)Object.assign(lead,opt.flag);
+
 }
 
-const summaryStatusMap={
-  hot:{label:'Ready for medical review',action:'A <strong>senior coordinator</strong> will reach out within about <strong>2 hours</strong> to begin your medical review.'},
-  warm:{label:'Good potential — a few details to clarify',action:'A <strong>coordinator</strong> will reach out within about <strong>48 hours</strong> to walk through the remaining details with you.'},
-  cold:{label:'Early in your research',action:"We'll send you our <strong>Patient Guide</strong> so you can take your time, and we're here whenever you're ready."},
-  doctor:{label:'Specialized medical review needed',action:'Our <strong>medical team</strong> will personally review your records before discussing any next steps.'},
-  unq:{label:'Not the right fit at this time',action:"Thank you for your time — we've noted your interest and wish you the very best."},
-  wellness:{label:'Recovery & Wellness inquiry',action:'A <strong>Recovery Menu coordinator</strong> will reach out with schedules, pricing, and membership options.'},
-  physician:{label:'Professional inquiry',action:'The <strong>ISSCA / Global Stem Cells Group</strong> team will follow up with information on programs and next steps.'}
+const summaryStatusMap = {
+
+  hot:      { label:'Ready for medical review',          action:'A <strong>senior coordinator</strong> will reach out within about <strong>2 hours</strong> to begin your medical review.' },
+
+  warm:     { label:'Good potential — a few details to clarify', action:'A <strong>coordinator</strong> will reach out within about <strong>48 hours</strong> to walk through the remaining details with you.' },
+
+  cold:     { label:'Early in your research',            action:'We\'ll send you our <strong>Patient Guide</strong> so you can take your time, and we\'re here whenever you\'re ready.' },
+
+  doctor:   { label:'Specialized medical review needed', action:'Our <strong>medical team</strong> will personally review your records before discussing any next steps.' },
+
+  unq:      { label:'Not the right fit at this time',    action:'Thank you for your time — we\'ve noted your interest and wish you the very best.' },
+
+  wellness: { label:'Recovery & Wellness inquiry',       action:'A <strong>Recovery Menu coordinator</strong> will reach out with schedules, pricing, and membership options.' },
+
+  physician:{ label:'Professional inquiry',              action:'The <strong>ISSCA / Global Stem Cells Group</strong> team will follow up with information on programs and next steps.' }
+
 };
 
-function buildSummaryCard(){
+function buildHandoffText(){
+
   const status=leadStatus();
-  const sm=summaryStatusMap[status];
-  const valClass=(v,ok)=>ok?'sc-val ok':(v&&v!=='—'?'sc-val warn':'sc-val bad');
-  let rows=[];
-  if(lead.segment==='wellness'){rows=[['Name',lead.name||'—',!!lead.name],['Interest','Recovery & Wellness',true],['Location',lead.wellnessLocation||'—',!!lead.wellnessLocation],['Service',lead.wellnessInterest||'—',!!lead.wellnessInterest],['Timing',lead.wellnessTiming||'—',!!lead.wellnessTiming]];}
-  else if(lead.segment==='physician'){rows=[['Name','Dr. '+(lead.name||'—'),!!lead.name],['Interest','Professional / ISSCA',true],['Specialty',lead.physicianSpecialty||'—',!!lead.physicianSpecialty],['Country',lead.country||'—',!!lead.country],['Focus',lead.physicianInterest||'—',!!lead.physicianInterest]];}
-  else{rows=[['Name',lead.name||'—',!!lead.name],['Looking for',({patient:'Treatment for myself',caregiver:'Support for a family member',athlete:'Athlete recovery / performance'}[lead.segment])||'—',!!lead.segment],['Country',lead.country||'—',!!lead.country],['Condition',(lead.conditionCategory||'—')+(lead.conditionDetail?' · '+lead.conditionDetail:''),!!lead.conditionCategory],['Diagnosis',lead.diagnosis||'—',lead.diagnosis==='Yes'],['Duration',lead.duration||'—',!!lead.duration],['Travel',lead.travel?(lead.travel+(lead.passport?' · '+lead.passport:'')):'—',lead.travel==='Yes'],['Budget',lead.budget||'—',['Yes confirmed','Yes (with info)'].includes(lead.budget)],['Records',lead.records||'—',lead.records==='Yes'],['Timeline',lead.timeline||'—',['Immediate','30 days'].includes(lead.timeline)],['Decision',lead.decision||'—',['Self','Family'].includes(lead.decision)]];}
-  const rowsHtml=rows.map(([k,v,ok])=>`<div class="sc-row"><span class="sc-key">${k}</span><span class="${valClass(v,ok)}">${v}</span></div>`).join('');
-  return `<div class="summary-card"><div class="sc-title"><svg viewBox="0 0 24 24" fill="none" stroke="#7A412D" stroke-width="1.8" stroke-linecap="round"><path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg>What you've shared so far</div><div class="sc-grid">${rowsHtml}</div><div class="sc-status-row"><div class="sc-status-block"><div class="sc-status-label">Next step</div><div class="sc-status-val">${sm.label}</div></div></div><div class="sc-action">${sm.action}</div></div>`;
+
+  const summary=buildSummaryCard();
+
+  const handoff={
+
+    hot:`Excellent, ${lead.name}. Based on what you've shared, your case looks like a <strong>strong candidate for medical review</strong>.\n\nA <strong>senior coordinator</strong> will reach out within <strong>2 hours</strong> to collect your records and schedule the medical review. Shall we proceed?`,
+
+    warm:`Thanks, ${lead.name}. Your case shows <strong>good potential</strong>, with a few points to clarify before medical review.\n\nA coordinator will reach out within <strong>48 hours</strong>. Shall we proceed?`,
+
+    cold:`Thanks, ${lead.name}. It sounds like you're still in <em>early research</em>. I'd recommend receiving our Patient Guide and reconnecting when you're closer to a decision. Should we send it?`,
+
+    doctor:`${lead.name}, since your condition (${lead.conditionCategory}) requires <strong>specialized medical review</strong>, I won't proceed with a standard evaluation.\n\nA coordinator will reach out to collect records and forward them to the medical team. Only after that can we discuss whether you're a candidate. Shall we proceed?`,
+
+    unq:`Thanks for your time, ${lead.name}. We can't move forward right now, but we appreciate your interest.`,
+
+    wellness:`Thanks, ${lead.name}. Your request to the <strong>Recovery & Wellness Menu</strong> is registered — a coordinator will reach out with schedules, pricing, and membership options.`,
+
+    physician:`Thanks, Dr. ${lead.name}. Your request to the <strong>ISSCA / Global Stem Cells Group</strong> team is registered — you'll receive information about programs and next steps.`
+
+  };
+
+  return summary+'<br>'+handoff[status];
+
 }
 
-function buildHandoffText(){
+function buildSummaryCard(){
+
   const status=leadStatus();
-  const summary=buildSummaryCard();
-  const handoff={
-    hot:`Excellent, ${lead.name}. Based on what you've shared, your case looks like a <strong>strong candidate for medical review</strong>.\n\nA <strong>senior coordinator</strong> will reach out within <strong>2 hours</strong> to collect your records and schedule the medical review. Shall we proceed?`,
-    warm:`Thanks, ${lead.name}. Your case shows <strong>good potential</strong>, with a few points to clarify before medical review.\n\nA coordinator will reach out within <strong>48 hours</strong>. Shall we proceed?`,
-    cold:`Thanks, ${lead.name}. It sounds like you're still in <em>early research</em>. I'd recommend receiving our Patient Guide and reconnecting when you're closer to a decision. Should we send it?`,
-    doctor:`${lead.name}, since your condition (${lead.conditionDetail||lead.conditionCategory}) requires <strong>specialized medical review</strong>, I won't proceed with a standard evaluation.\n\nA coordinator will reach out to collect records and forward them to the medical team. Only after that can we discuss whether you're a candidate. Shall we proceed?`,
-    unq:`Thanks for your time, ${lead.name}. We can't move forward right now, but we appreciate your interest.`,
-    wellness:`Thanks, ${lead.name}. Your request to the <strong>Recovery & Wellness Menu</strong> is registered — a coordinator will reach out with schedules, pricing, and membership options.`,
-    physician:`Thanks, Dr. ${lead.name}. Your request to the <strong>ISSCA / Global Stem Cells Group</strong> team is registered — you'll receive information about programs and next steps.`
-  };
-  return summary+'<br>'+handoff[status];
+
+  const sm=summaryStatusMap[status];
+
+  const valClass=(v,ok)=>ok?'sc-val ok':(v&&v!=='—'?'sc-val warn':'sc-val bad');
+
+  let rows=[];
+
+  if(lead.segment==='wellness'){
+
+    rows=[
+
+      ['Name',lead.name||'—',!!lead.name],
+
+      ['Interest','Recovery & Wellness',true],
+
+      ['Service',lead.wellnessInterest||'—',!!lead.wellnessInterest],
+
+      ['Timing',lead.wellnessTiming||'—',!!lead.wellnessTiming]
+
+    ];
+
+  }else if(lead.segment==='physician'){
+
+    rows=[
+
+      ['Name','Dr. '+(lead.name||'—'),!!lead.name],
+
+      ['Interest','Professional / ISSCA',true],
+
+      ['Specialty',lead.physicianSpecialty||'—',!!lead.physicianSpecialty],
+
+      ['Focus',lead.physicianInterest||'—',!!lead.physicianInterest]
+
+    ];
+
+  }else{
+
+    rows=[
+
+      ['Name',lead.name||'—',!!lead.name],
+
+      ['Looking for',({patient:'Treatment for myself',caregiver:'Support for a family member',athlete:'Athlete recovery / performance'}[lead.segment])||'—',!!lead.segment],
+
+      ['Condition',lead.conditionCategory||'—',!!lead.conditionCategory],
+
+      ['Travel',lead.travel||'—',lead.travel==='Yes'],
+
+      ['Budget',lead.budget||'—',['Yes confirmed'].includes(lead.budget)],
+
+      ['Timeline',lead.timeline||'—',['Immediate','30 days'].includes(lead.timeline)]
+
+    ];
+
+  }
+
+  const rowsHtml=rows.map(([k,v,ok])=>`<div class="sc-row"><span class="sc-key">${k}</span><span class="${valClass(v,ok)}">${v}</span></div>`).join('');
+
+  return `<div class="summary-card">
+
+    <div class="sc-title">
+
+      <svg viewBox="0 0 24 24" fill="none" stroke="#7A412D" stroke-width="1.8" stroke-linecap="round">
+
+        <path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/>
+
+      </svg>
+
+      What you've shared so far
+
+    </div>
+
+    <div class="sc-grid">${rowsHtml}</div>
+
+    <div class="sc-status-row">
+
+      <div class="sc-status-block">
+
+        <div class="sc-status-label">Next step</div>
+
+        <div class="sc-status-val">${sm.label}</div>
+
+      </div>
+
+    </div>
+
+    <div class="sc-action">${sm.action}</div>
+
+  </div>`;
+
 }
 
 function addBot(html,replies,opts={}){
-  const row=document.createElement('div');row.className='row bot';
-  const av=document.createElement('div');av.className='bavatar';av.textContent='CI';
-  const bub=document.createElement('div');bub.className='bubble';bub.innerHTML=html;
-  row.appendChild(av);row.appendChild(bub);msgs.appendChild(row);
+
+  const row=document.createElement('div');
+
+  row.className='row bot';
+
+  const av=document.createElement('div');
+
+  av.className='bavatar';
+
+  av.textContent='CI';
+
+  const bub=document.createElement('div');
+
+  bub.className='bubble';
+
+  bub.innerHTML=html;
+
+  row.appendChild(av);
+
+  row.appendChild(bub);
+
+  msgs.appendChild(row);
+
   if(replies&&replies.length){
-    const qw=document.createElement('div');qw.className='qr-wrap';
+
+    const qw=document.createElement('div');
+
+    qw.className='qr-wrap';
+
     replies.forEach(r=>{
+
       const b=document.createElement('button');
+
       b.className='qr'+(opts.dangerLabels&&opts.dangerLabels.includes(r)?' danger':'');
-      b.textContent=r;b.onclick=()=>{qw.remove();send(r);};qw.appendChild(b);
+
+      b.textContent=r;
+
+      b.onclick=()=>{qw.remove();send(r);};
+
+      qw.appendChild(b);
+
     });
+
     msgs.appendChild(qw);
+
   }
+
   msgs.scrollTop=msgs.scrollHeight;
+
 }
 
 function addUser(text){
-  const row=document.createElement('div');row.className='row user';
-  const bub=document.createElement('div');bub.className='bubble';bub.textContent=text;
-  row.appendChild(bub);msgs.appendChild(row);msgs.scrollTop=msgs.scrollHeight;
+
+  const row=document.createElement('div');
+
+  row.className='row user';
+
+  const bub=document.createElement('div');
+
+  bub.className='bubble';
+
+  bub.textContent=text;
+
+  row.appendChild(bub);
+
+  msgs.appendChild(row);
+
+  msgs.scrollTop=msgs.scrollHeight;
+
 }
 
 function showTyping(){
-  const row=document.createElement('div');row.className='row bot';row.id='typ';
+
+  const row=document.createElement('div');
+
+  row.className='row bot';
+
+  row.id='typ';
+
   row.innerHTML='<div class="bavatar">CI</div><div class="bubble" style="padding:10px 15px"><div class="typing-dots"><span></span><span></span><span></span></div></div>';
-  msgs.appendChild(row);msgs.scrollTop=msgs.scrollHeight;
+
+  msgs.appendChild(row);
+
+  msgs.scrollTop=msgs.scrollHeight;
+
 }
+
 function hideTyping(){const t=document.getElementById('typ');if(t)t.remove();}
 
 function renderStep(stepId){
-  if(stepId==='condition_router'){if(lead.segment==='athlete')return renderStep('athlete_sport');return renderStep('condition');}
-  const step=steps[stepId];if(!step)return;
-  currentStep=stepId;if(step.prog!==undefined)setProgress(step.prog+1);
-  if(step.sendWebhook)sendToHubSpot();
+
+  const step=steps[stepId];
+
+  if(!step)return;
+
+  currentStep=stepId;
+
+  if(step.prog!==undefined)setProgress(step.prog+1);
+
   if(step.chain==='final_handoff'){
+
     addBot(interpolate(step.text),null);
-    setTimeout(()=>{showTyping();setTimeout(()=>{hideTyping();renderStep('final_handoff');},800);},400);
+
+    setTimeout(()=>{
+
+      showTyping();
+
+      setTimeout(()=>{hideTyping();renderStep('final_handoff');},800);
+
+    },400);
+
     return;
+
   }
+
   if(stepId==='final_handoff'){
-    const status=leadStatus();const text=buildHandoffText();let replies;
+
+    const status=leadStatus();
+
+    const text=buildHandoffText();
+
+    let replies;
+
     if(['hot','warm','doctor'].includes(status))replies=['Yes, contact me',"I'd rather think it over"];
+
     else if(status==='cold')replies=['Yes, send me content','Not right now'];
+
     else replies=['Understood, thanks'];
+
     addBot(text,replies);
-    steps.final_handoff.options={'Yes, contact me':{next:'contact_capture'},"I'd rather think it over":{next:'end_polite'},'Yes, send me content':{next:'contact_capture'},'Not right now':{next:'end_polite'},'Understood, thanks':{next:'end_polite'}};
+
+    steps.final_handoff.options={
+
+      'Yes, contact me':{next:'contact_capture'},
+
+      "I'd rather think it over":{next:'end_polite'},
+
+      'Yes, send me content':{next:'contact_capture'},
+
+      'Not right now':{next:'end_polite'},
+
+      'Understood, thanks':{next:'end_polite'}
+
+    };
+
     return;
+
   }
+
   let html=interpolate(step.text);
+
   if(step.summary)html+=buildSummaryCard();
+
   const replyLabels=step.options?Object.keys(step.options):[];
+
   const dangerLabels=step.options?Object.entries(step.options).filter(([_,v])=>v.flag&&v.flag.hardFail).map(([k])=>k):[];
+
   addBot(html,replyLabels,{dangerLabels});
+
   if(step.expectInput)awaitingInput=step.expectInput;
+
 }
 
 function send(text){
-  addUser(text);showTyping();
+
+  addUser(text);
+
+  showTyping();
+
   setTimeout(()=>{
+
     hideTyping();
-    if(awaitingInput){const cfg=awaitingInput;awaitingInput=null;lead[cfg.field]=text;renderStep(cfg.next);return;}
+
+    if(awaitingInput){
+
+      const cfg=awaitingInput;
+
+      awaitingInput=null;
+
+      lead[cfg.field]=text;
+
+      renderStep(cfg.next);
+
+      return;
+
+    }
+
     const step=steps[currentStep];
-    if(step&&step.options&&step.options[text]){const opt=step.options[text];applySetScoreFlag(opt);renderStep(opt.next);return;}
+
+    if(step&&step.options&&step.options[text]){
+
+      const opt=step.options[text];
+
+      applySetScoreFlag(opt);
+
+      renderStep(opt.next);
+
+      return;
+
+    }
+
     addBot('Thanks for your message. Please select an option, or type <em>"speak to a coordinator"</em>.',null);
-    if(text.toLowerCase().includes('coordinator')||text.toLowerCase().includes('human')){setTimeout(()=>renderStep('contact_capture'),600);}
+
+    if(text.toLowerCase().includes('coordinator')||text.toLowerCase().includes('human')){
+
+      setTimeout(()=>renderStep('contact_capture'),600);
+
+    }
+
   },700+Math.random()*500);
+
 }
 
-btn.onclick=()=>{const v=inp.value.trim();if(!v)return;inp.value='';send(v);};
+btn.onclick=()=>{
+
+  const v=inp.value.trim();
+
+  if(!v)return;
+
+  inp.value='';
+
+  send(v);
+
+};
+
 inp.addEventListener('keydown',e=>{if(e.key==='Enter')btn.click();});
+
 setTimeout(()=>renderStep('start'),500);
+
 </script>
+
 </body>
+
 </html>
