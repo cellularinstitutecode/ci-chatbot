@@ -1,1199 +1,745 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Cellular Institute · AI Coordinator · v2</title>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-
-<style>
-
-:root{--clay:#7A412D;--clay-deep:#5C2F1F;--cinnamon:#B17253;--tan:#DBBC9D;--almond:#F0DAC3;--parchment:#F7F2ED;--ink:#2C1810;--muted:#8B7560;}
-
-*{box-sizing:border-box;margin:0;padding:0;}
-
-html,body{height:100%;}
-
-body{font-family:'DM Sans','-apple-system','BlinkMacSystemFont','Segoe UI','Roboto','Helvetica Neue',sans-serif;background:radial-gradient(circle at 20% 0%,#F0DAC3 0%,transparent 55%),radial-gradient(circle at 80% 100%,#DBBC9D 0%,transparent 50%),#F7F2ED;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:1.5rem 1rem;color:var(--ink);-webkit-font-smoothing:antialiased;}
-
-body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.45 0 0 0 0 0.27 0 0 0 0 0.18 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:0.7;}
-
-.shell{position:relative;z-index:1;width:100%;max-width:440px;border-radius:24px;overflow:hidden;box-shadow:0 32px 80px rgba(92,47,31,0.22),0 4px 16px rgba(92,47,31,0.08),0 0 0 1px rgba(255,255,255,0.5) inset;display:flex;flex-direction:column;background:#fff;}
-
-.header{background:linear-gradient(135deg,var(--clay) 0%,var(--clay-deep) 100%);padding:22px 22px 18px;display:flex;align-items:center;gap:14px;position:relative;overflow:hidden;}
-
-.header::before{content:'';position:absolute;top:-50px;right:-40px;width:170px;height:170px;border-radius:50%;background:radial-gradient(circle,rgba(219,188,157,0.22) 0%,transparent 65%);}
-
-.header::after{content:'';position:absolute;bottom:-70px;left:25%;width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,rgba(177,114,83,0.28) 0%,transparent 70%);}
-
-.logo-ring{position:relative;z-index:1;width:46px;height:46px;border-radius:50%;background:rgba(240,218,195,0.12);border:1px solid rgba(240,218,195,0.32);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-
-.logo-ring svg{width:24px;height:24px;}
-
-.hinfo{flex:1;position:relative;z-index:1;}
-
-.hname{font-family:'Fraunces','Iowan Old Style','Georgia','Times New Roman',serif;font-weight:500;font-size:17px;color:var(--almond);letter-spacing:0.005em;line-height:1.1;}
-
-.hsub{font-family:'Fraunces','Iowan Old Style','Georgia','Times New Roman',serif;font-style:italic;font-size:10.5px;color:rgba(240,218,195,0.6);margin-top:3px;letter-spacing:0.04em;}
-
-.hstatus{font-size:9.5px;color:var(--tan);margin-top:6px;display:flex;align-items:center;gap:6px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;}
-
-.dot{width:5px;height:5px;border-radius:50%;background:#C8E4B8;box-shadow:0 0 6px #C8E4B8;animation:pulse 2.2s infinite;}
-
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.45;transform:scale(0.85)}}
-
-.trust-ribbon{background:linear-gradient(180deg,var(--almond) 0%,#EBD0B3 100%);padding:7px 14px;display:flex;justify-content:center;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid rgba(122,65,45,0.1);}
-
-.trust-item{font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:var(--clay-deep);font-weight:600;}
-
-.trust-divider{width:3px;height:3px;border-radius:50%;background:var(--cinnamon);opacity:0.5;}
-
-.prog-bar{background:var(--clay-deep);padding:10px 22px;display:flex;gap:5px;align-items:center;}
-
-.prog-step{flex:1;height:2px;border-radius:2px;background:rgba(240,218,195,0.12);transition:background 0.5s ease;}
-
-.prog-step.done{background:var(--tan);}
-
-.prog-step.active{background:var(--almond);}
-
-.prog-label{font-size:9px;color:rgba(240,218,195,0.65);margin-left:12px;white-space:nowrap;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;}
-
-#messages{height:460px;overflow-y:auto;padding:22px 18px 14px;display:flex;flex-direction:column;gap:14px;background:var(--parchment);scroll-behavior:smooth;}
-
-#messages::-webkit-scrollbar{width:4px;}
-
-#messages::-webkit-scrollbar-thumb{background:rgba(122,65,45,0.2);border-radius:2px;}
-
-.row{display:flex;gap:9px;}
-
-.row.bot{align-self:flex-start;max-width:92%;}
-
-.row.user{align-self:flex-end;max-width:82%;flex-direction:row-reverse;}
-
-.bavatar{width:32px;height:32px;border-radius:50%;background:var(--clay);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;font-family:'Fraunces','Iowan Old Style','Georgia','Times New Roman',serif;font-weight:500;font-size:11px;color:var(--almond);letter-spacing:0.04em;border:1px solid var(--cinnamon);}
-
-.bubble{padding:12px 16px;font-size:13px;line-height:1.65;animation:fadeUp 0.3s ease;}
-
-@keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
-
-.row.bot .bubble{background:#FFFFFF;color:var(--ink);border-radius:4px 18px 18px 18px;border:1px solid rgba(122,65,45,0.08);box-shadow:0 1px 3px rgba(92,47,31,0.04);}
-
-.row.bot .bubble strong{color:var(--clay);font-weight:600;}
-
-.row.bot .bubble em{font-family:'Fraunces','Iowan Old Style','Georgia','Times New Roman',serif;font-style:italic;color:var(--cinnamon);font-size:13.5px;}
-
-.row.bot .bubble .disclaimer{font-size:11px;color:var(--muted);font-style:italic;border-left:2px solid var(--tan);padding:4px 0 4px 10px;margin:8px 0 4px;line-height:1.5;}
-
-.row.bot .bubble .quote{font-family:'Fraunces','Iowan Old Style','Georgia','Times New Roman',serif;font-style:italic;font-size:13px;color:var(--cinnamon);border-left:2px solid var(--tan);padding:6px 0 6px 12px;margin:6px 0;line-height:1.55;}
-
-.row.user .bubble{background:var(--clay);color:var(--almond);border-radius:18px 4px 18px 18px;}
-
-.summary-card{background:linear-gradient(180deg,#FFFFFF 0%,#FCF8F2 100%);border:1px solid rgba(122,65,45,0.15);border-radius:14px;padding:16px 16px 14px;margin-top:12px;box-shadow:0 2px 10px rgba(92,47,31,0.05);}
-
-.sc-title{font-family:'Fraunces','Iowan Old Style','Georgia','Times New Roman',serif;font-size:13px;color:var(--clay);letter-spacing:0.02em;margin-bottom:11px;padding-bottom:9px;border-bottom:1px dashed rgba(122,65,45,0.18);display:flex;align-items:center;gap:7px;}
-
-.sc-title svg{width:14px;height:14px;}
-
-.sc-grid{display:grid;grid-template-columns:1fr;gap:6px;margin-bottom:12px;}
-
-.sc-row{display:flex;justify-content:space-between;align-items:baseline;font-size:11.5px;gap:12px;}
-
-.sc-key{color:var(--muted);letter-spacing:0.02em;white-space:nowrap;}
-
-.sc-val{color:var(--ink);font-weight:500;text-align:right;}
-
-.sc-val.ok::before{content:'✓ ';color:#4A6340;}
-
-.sc-val.warn::before{content:'◌ ';color:#8E6310;}
-
-.sc-val.bad::before{content:'✕ ';color:#8B3A1A;}
-
-.sc-status-row{display:flex;align-items:center;padding-top:10px;border-top:1px solid rgba(122,65,45,0.12);margin-top:4px;}
-
-.sc-status-block{flex:1;text-align:left;}
-
-.sc-status-label{font-size:8.5px;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase;}
-
-.sc-status-val{font-family:'Fraunces','Iowan Old Style','Georgia','Times New Roman',serif;font-size:14px;color:var(--clay);margin-top:2px;}
-
-.sc-action{margin-top:11px;padding:9px 12px;background:var(--almond);border-radius:8px;font-size:11px;color:var(--clay-deep);letter-spacing:0.01em;line-height:1.5;}
-
-.qr-wrap{padding-left:41px;display:flex;flex-wrap:wrap;gap:6px;margin-top:-4px;}
-
-.qr{font-size:11.5px;font-family:'DM Sans','-apple-system','BlinkMacSystemFont','Segoe UI','Roboto','Helvetica Neue',sans-serif;font-weight:500;padding:8px 14px;border-radius:22px;border:1px solid var(--cinnamon);color:var(--clay);background:transparent;cursor:pointer;transition:all 0.18s ease;letter-spacing:0.005em;text-align:left;}
-
-.qr:hover{background:var(--clay);color:var(--almond);border-color:var(--clay);transform:translateY(-1px);}
-
-.qr.danger{border-color:#C26B4A;color:#8B3A1A;}
-
-.qr.danger:hover{background:#8B3A1A;color:#fff;border-color:#8B3A1A;}
-
-.typing-dots{display:flex;gap:4px;align-items:center;padding:14px 16px;}
-
-.typing-dots span{width:6px;height:6px;border-radius:50%;background:var(--cinnamon);animation:blink 1.2s infinite;}
-
-.typing-dots span:nth-child(2){animation-delay:0.18s;}
-
-.typing-dots span:nth-child(3){animation-delay:0.36s;}
-
-@keyframes blink{0%,60%,100%{opacity:0.3}30%{opacity:1}}
-
-.input-row{display:flex;gap:9px;padding:14px 16px;border-top:1px solid rgba(122,65,45,0.08);background:#fff;align-items:center;}
-
-#user-input{flex:1;font-size:13px;font-family:'DM Sans','-apple-system','BlinkMacSystemFont','Segoe UI','Roboto','Helvetica Neue',sans-serif;padding:10px 16px;border-radius:22px;border:1px solid rgba(122,65,45,0.18);background:var(--parchment);color:var(--ink);outline:none;transition:border-color 0.2s,background 0.2s;}
-
-#user-input:focus{border-color:var(--cinnamon);background:#fff;}
-
-#user-input::placeholder{color:var(--muted);}
-
-#send-btn{width:40px;height:40px;border-radius:50%;background:var(--clay);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.18s,transform 0.1s;flex-shrink:0;}
-
-#send-btn:hover{background:var(--cinnamon);}
-
-#send-btn:active{transform:scale(0.92);}
-
-#send-btn svg{width:16px;height:16px;}
-
-.footer-note{text-align:center;font-size:9px;color:var(--muted);padding:10px 16px 14px;background:#fff;border-top:1px solid rgba(122,65,45,0.05);letter-spacing:0.12em;text-transform:uppercase;font-weight:500;}
-
-.footer-note span{color:var(--cinnamon);font-weight:600;}
-
-@media(max-width:460px){.shell{border-radius:20px;}#messages{height:420px;}.trust-ribbon{padding:6px 10px;gap:6px;}.trust-item{font-size:8px;}}
-
-</style>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cellular Institute · AI Coordinator · v2</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --ci-navy: #0A1931;
+      --ci-teal: #00B4D8;
+      --ci-gold: #C9A84C;
+      --ci-light: #F4F6F9;
+      --ci-white: #FFFFFF;
+      --ci-gray: #6B7280;
+      --ci-border: #E5E7EB;
+      --ci-success: #10B981;
+      --ci-error: #EF4444;
+      --radius: 12px;
+      --shadow: 0 4px 24px rgba(10,25,49,0.10);
+    }
+    html, body { height: 100%; font-family: 'Inter', sans-serif; background: var(--ci-light); }
+    body { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+
+    /* ── WIDGET SHELL ── */
+    #chat-widget {
+      width: 420px; max-width: 100vw;
+      background: var(--ci-white);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      display: flex; flex-direction: column;
+      overflow: hidden;
+      max-height: 92vh;
+    }
+
+    /* ── HEADER ── */
+    .cw-header {
+      background: var(--ci-navy);
+      padding: 18px 20px 16px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .cw-avatar {
+      width: 42px; height: 42px; border-radius: 50%;
+      background: var(--ci-teal);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; flex-shrink: 0;
+    }
+    .cw-header-text h2 { color: var(--ci-white); font-size: 15px; font-weight: 600; }
+    .cw-header-text p { color: rgba(255,255,255,0.6); font-size: 12px; margin-top: 2px; }
+    .cw-status { margin-left: auto; display: flex; align-items: center; gap: 6px; color: var(--ci-success); font-size: 12px; font-weight: 500; }
+    .cw-status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ci-success); }
+
+    /* ── MESSAGES ── */
+    .cw-messages {
+      flex: 1; overflow-y: auto; padding: 20px 16px;
+      display: flex; flex-direction: column; gap: 14px;
+      scroll-behavior: smooth;
+    }
+    .cw-messages::-webkit-scrollbar { width: 4px; }
+    .cw-messages::-webkit-scrollbar-thumb { background: var(--ci-border); border-radius: 4px; }
+
+    /* ── BUBBLES ── */
+    .msg { display: flex; gap: 10px; animation: fadeUp .3s ease; }
+    .msg.user { flex-direction: row-reverse; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .msg-avatar { width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+    .bot .msg-avatar { background: var(--ci-navy); }
+    .user .msg-avatar { background: var(--ci-teal); }
+    .msg-bubble {
+      max-width: 78%; padding: 11px 15px;
+      border-radius: 16px; font-size: 14px; line-height: 1.55;
+    }
+    .bot .msg-bubble { background: var(--ci-light); color: #1F2937; border-bottom-left-radius: 4px; }
+    .user .msg-bubble { background: var(--ci-teal); color: var(--ci-white); border-bottom-right-radius: 4px; }
+    .msg-bubble strong { font-weight: 600; }
+    .msg-bubble ul { padding-left: 18px; margin-top: 6px; }
+    .msg-bubble ul li { margin-bottom: 4px; }
+
+    /* ── TYPING ── */
+    .typing-dots span { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--ci-gray); margin: 0 2px; animation: bounce 1.2s infinite; }
+    .typing-dots span:nth-child(2) { animation-delay: .2s; }
+    .typing-dots span:nth-child(3) { animation-delay: .4s; }
+    @keyframes bounce { 0%,60%,100% { transform: translateY(0); } 30% { transform: translateY(-6px); } }
+
+    /* ── INPUT AREA ── */
+    .cw-input-area { padding: 12px 16px 16px; border-top: 1px solid var(--ci-border); }
+
+    /* ── QUICK REPLY BUTTONS ── */
+    .cw-quick-replies { display: flex; flex-wrap: wrap; gap: 8px; padding: 4px 0 8px; }
+    .qr-btn {
+      padding: 8px 16px; border: 2px solid var(--ci-teal);
+      background: transparent; color: var(--ci-teal);
+      border-radius: 24px; font-size: 13px; font-weight: 500;
+      cursor: pointer; transition: all .2s;
+    }
+    .qr-btn:hover { background: var(--ci-teal); color: var(--ci-white); }
+    .qr-btn.selected { background: var(--ci-teal); color: var(--ci-white); }
+
+    /* ── TEXT INPUT ROW ── */
+    .cw-text-input-row { display: flex; gap: 8px; }
+    .cw-text-input {
+      flex: 1; padding: 10px 14px;
+      border: 1.5px solid var(--ci-border);
+      border-radius: 10px; font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      transition: border-color .2s;
+      outline: none;
+    }
+    .cw-text-input:focus { border-color: var(--ci-teal); }
+    .cw-send-btn {
+      width: 40px; height: 40px;
+      background: var(--ci-teal); border: none;
+      border-radius: 10px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .2s; flex-shrink: 0;
+    }
+    .cw-send-btn:hover { background: #0096B4; }
+    .cw-send-btn svg { fill: white; }
+
+    /* ── PHONE INPUT ROW ── */
+    .cw-phone-row { display: flex; gap: 6px; }
+    .cw-country-select {
+      padding: 10px 8px;
+      border: 1.5px solid var(--ci-border);
+      border-radius: 10px; font-size: 13px;
+      font-family: 'Inter', sans-serif;
+      background: var(--ci-white);
+      cursor: pointer; outline: none;
+      transition: border-color .2s;
+      flex-shrink: 0; max-width: 110px;
+    }
+    .cw-country-select:focus { border-color: var(--ci-teal); }
+
+    /* ── SUMMARY CARD ── */
+    .summary-card {
+      background: linear-gradient(135deg, var(--ci-navy) 0%, #1a3355 100%);
+      border-radius: 14px; padding: 18px;
+      color: var(--ci-white); margin-top: 4px;
+    }
+    .summary-card h3 { font-size: 14px; font-weight: 600; margin-bottom: 12px; color: var(--ci-gold); }
+    .summary-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 13px; }
+    .summary-row:last-child { border-bottom: none; }
+    .summary-row .label { color: rgba(255,255,255,0.6); }
+    .summary-row .value { font-weight: 500; text-align: right; max-width: 55%; }
+    .score-badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-top: 8px; }
+    .score-hot { background: #EF4444; }
+    .score-warm { background: #F59E0B; }
+    .score-cool { background: var(--ci-teal); }
+
+    /* ── PROGRESS BAR ── */
+    .cw-progress { padding: 0 16px 4px; }
+    .progress-bar { height: 3px; background: var(--ci-border); border-radius: 3px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--ci-teal); border-radius: 3px; transition: width .5s ease; }
+
+    /* ── FOOTER ── */
+    .cw-footer { text-align: center; font-size: 11px; color: var(--ci-gray); padding: 6px 0 10px; }
+    .cw-footer a { color: var(--ci-teal); text-decoration: none; }
+  </style>
 </head>
-
 <body>
 
-<div class="shell">
-
-  <div class="header">
-
-    <div class="logo-ring">
-
-      <svg viewBox="0 0 32 32" fill="none">
-
-        <circle cx="16" cy="16" r="3.6" fill="#F0DAC3"/>
-
-        <circle cx="16" cy="6" r="1.9" fill="#DBBC9D"/><circle cx="16" cy="26" r="1.9" fill="#DBBC9D"/>
-
-        <circle cx="6" cy="16" r="1.9" fill="#DBBC9D"/><circle cx="26" cy="16" r="1.9" fill="#DBBC9D"/>
-
-        <circle cx="9" cy="9" r="1.3" fill="#B17253"/><circle cx="23" cy="9" r="1.3" fill="#B17253"/>
-
-        <circle cx="9" cy="23" r="1.3" fill="#B17253"/><circle cx="23" cy="23" r="1.3" fill="#B17253"/>
-
-        <line x1="16" y1="8" x2="16" y2="13" stroke="#DBBC9D" stroke-width="0.7"/>
-
-        <line x1="16" y1="19" x2="16" y2="24" stroke="#DBBC9D" stroke-width="0.7"/>
-
-        <line x1="8" y1="16" x2="13" y2="16" stroke="#DBBC9D" stroke-width="0.7"/>
-
-        <line x1="19" y1="16" x2="24" y2="16" stroke="#DBBC9D" stroke-width="0.7"/>
-
-      </svg>
-
+<div id="chat-widget">
+  <!-- Header -->
+  <div class="cw-header">
+    <div class="cw-avatar">🧬</div>
+    <div class="cw-header-text">
+      <h2>Cellular Institute AI</h2>
+      <p>Regenerative Medicine Coordinator</p>
     </div>
-
-    <div class="hinfo">
-
-      <div class="hname">Cellular Institute</div>
-
-      <div class="hsub">Cancun · Advanced Regenerative Medicine</div>
-
-      <div class="hstatus"><span class="dot"></span>AI Coordinator · 24/7</div>
-
+    <div class="cw-status">
+      <div class="cw-status-dot"></div>
+      Online
     </div>
-
   </div>
 
-  <div class="trust-ribbon">
-
-    <span class="trust-item">Cellgenic Lab</span>
-
-    <span class="trust-divider"></span>
-
-    <span class="trust-item">COFEPRIS</span>
-
-    <span class="trust-divider"></span>
-
-    <span class="trust-item">ISSCA</span>
-
-    <span class="trust-divider"></span>
-
-    <span class="trust-item">15+ Years</span>
-
+  <!-- Progress -->
+  <div class="cw-progress">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
   </div>
 
-  <div class="prog-bar">
+  <!-- Messages -->
+  <div class="cw-messages" id="chatMessages"></div>
 
-    <div class="prog-step active" id="p1"></div>
+  <!-- Input Area -->
+  <div class="cw-input-area" id="inputArea"></div>
 
-    <div class="prog-step" id="p2"></div>
-
-    <div class="prog-step" id="p3"></div>
-
-    <div class="prog-step" id="p4"></div>
-
-    <div class="prog-step" id="p5"></div>
-
-    <span class="prog-label" id="prog-label">Welcome</span>
-
-  </div>
-
-  <div id="messages"></div>
-
-  <div class="input-row">
-
-    <input id="user-input" type="text" placeholder="Type your message...">
-
-    <button id="send-btn" aria-label="Send">
-
-      <svg viewBox="0 0 24 24" fill="none" stroke="#F0DAC3" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-
-        <line x1="12" y1="19" x2="12" y2="5"/>
-
-        <polyline points="5 12 12 5 19 12"/>
-
-      </svg>
-
-    </button>
-
-  </div>
-
-  <div class="footer-note">Patient Coordinator · <span>CI AI System · v2</span></div>
-
+  <!-- Footer -->
+  <div class="cw-footer">Powered by <a href="https://cellularinstitute.com" target="_blank">Cellular Institute</a></div>
 </div>
 
 <script>
+// ─────────────────────────────────────────
+// HUBSPOT CONFIG
+// ─────────────────────────────────────────
+const HS_PORTAL_ID   = '47689652';
+const HS_ACCESS_TOKEN = 'pat-na1-7f92364f-5a2f-44fd-b780-d93ddafba029';
 
-const msgs = document.getElementById('messages');
+// Save to HubSpot — creates contact after email, updates after each step
+let hsContactId = null;
 
-const inp  = document.getElementById('user-input');
+async function hsSave(properties) {
+  try {
+    if (!hsContactId) {
+      // CREATE new contact
+      const res = await fetch('https://api.hubapi.com/crm/v3/objects/contacts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + HS_ACCESS_TOKEN
+        },
+        body: JSON.stringify({ properties })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        hsContactId = data.id;
+        console.log('[CI] HubSpot contact created:', hsContactId);
+      } else {
+        // Contact may already exist — try to find by email and update
+        const errData = await res.json();
+        if (errData.category === 'CONFLICT' && errData.message && errData.message.includes('Contact already exists')) {
+          const existingId = errData.message.match(/ID: (\d+)/);
+          if (existingId) {
+            hsContactId = existingId[1];
+            await hsPatch(properties);
+          }
+        } else {
+          console.warn('[CI] HubSpot create error:', errData);
+        }
+      }
+    } else {
+      await hsPatch(properties);
+    }
+  } catch(e) {
+    console.warn('[CI] HubSpot save error:', e);
+  }
+}
 
-const btn  = document.getElementById('send-btn');
+async function hsPatch(properties) {
+  if (!hsContactId) return;
+  try {
+    const res = await fetch('https://api.hubapi.com/crm/v3/objects/contacts/' + hsContactId, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + HS_ACCESS_TOKEN
+      },
+      body: JSON.stringify({ properties })
+    });
+    if (res.ok) console.log('[CI] HubSpot contact updated:', hsContactId);
+    else console.warn('[CI] HubSpot patch error:', await res.json());
+  } catch(e) {
+    console.warn('[CI] HubSpot patch error:', e);
+  }
+}
 
-// ─── LEAD OBJECT (v2 — simplified) ──────────────────────────────────────────────
-
+// ─────────────────────────────────────────
+// LEAD DATA
+// ─────────────────────────────────────────
 const lead = {
-
-  segment:'',
-
-  name:'',
-
-  forWhom:'self',
-
-  conditionCategory:'',
-
-  travel:'',
-
-  budget:'',
-
-  timeline:'',
-
-  wellnessInterest:'',
-
-  wellnessTiming:'',
-
-  physicianSpecialty:'',
-
-  physicianInterest:'',
-
-  phone:'',
-
-  email:'',
-
-  // scoring
-
-  conditionFit:0,
-
-  travelScore:0,
-
-  budgetScore:0,
-
-  timelineScore:0,
-
-  engagementScore:5,
-
-  // flags
-
-  doctorReview:false,
-
-  hardFail:null
-
+  firstName: '', lastName: '', phone: '', email: '',
+  segment: '', condition: '', travel: '', budget: '', timeline: '',
+  score: 0, status: ''
 };
 
-let currentStep='start',awaitingInput=null;
-
-// ─── BACKSTAGE — internal lead routing (never shown to patient) ──────────────────────
-
-function totalScore(){return lead.conditionFit+lead.travelScore+lead.budgetScore+lead.timelineScore+lead.engagementScore;}
-
-function leadStatus(){
-
-  if(lead.segment==='wellness')return 'wellness';
-
-  if(lead.segment==='physician')return 'physician';
-
-  if(lead.hardFail)return 'unq';
-
-  if(lead.doctorReview)return 'doctor';
-
-  const s=totalScore();
-
-  if(s>=65)return 'hot';
-
-  if(s>=40)return 'warm';
-
-  if(s>=20)return 'cold';
-
-  return 'unq';
-
-}
-
-// ────────────────────────────────────────────────────────────────────────────
-
-function setProgress(s){
-
-  const labels=['','Welcome','Who','Condition','Travel','Investment'];
-
-  for(let i=1;i<=5;i++){
-
-    const el=document.getElementById('p'+i);
-
-    if(i<s)el.className='prog-step done';
-
-    else if(i===s)el.className='prog-step active';
-
-    else el.className='prog-step';
-
-  }
-
-  document.getElementById('prog-label').textContent=labels[s]||'Qualification';
-
-}
-
-const steps={
-
-  start:{
-
-    text:"Hello, welcome to <strong>Cellular Institute</strong>.\n\n<em>Advanced Regenerative Medicine in Cancun, Mexico.</em>\n<div class='quote'>We don't sell stem cells. We guide each patient through a personalized regenerative medicine experience built around quality, science, safety, and care.</div>\n<div class='disclaimer'>This chat isn't medical advice and doesn't replace a consultation. My role is to understand your case and guide you to the next responsible step.</div>\nIs it OK if I ask you a few brief questions?",
-
-    options:{'Yes, go ahead':{next:'segment_select'},'What do you do?':{next:'overview'},'Not right now':{next:'exit_consent'}},
-
-    prog:0
-
-  },
-
-  overview:{
-
-    text:"Cellular Institute is a premium regenerative medicine and longevity destination. What sets us apart:\n\n• <strong>Cellgenic</strong> — in-house lab with fresh cells, xeno-free, hypoxia, documented COA\n• <strong>Integrated protocol</strong> — biologics · peptides · ozone/EBOO · HBOT · red light · PEMF · diagnostics\n• <strong>Cancun</strong> as a medical destination with on-site guest house and concierge care\n• Backed by <em>ISSCA / Global Stem Cells Group</em>\n<div class='quote'>Not just a treatment. A complete regenerative experience.</div>\nShall we continue so I can understand your case?",
-
-    options:{'Yes, continue':{next:'segment_select'}},
-
-    prog:0
-
-  },
-
-  exit_consent:{text:"Of course. We're here whenever you're ready.\n\n<em>Cellular Institute · Cancun</em>",options:{},prog:0},
-
-  segment_select:{
-
-    text:"To guide you better: <strong>which of these describes your situation?</strong>",
-
-    options:{
-
-      "I'm looking for treatment for myself":{next:'name',set:{segment:'patient',forWhom:'self'}},
-
-      "Support for a family member (parent)":{next:'name',set:{segment:'caregiver',forWhom:'family'}},
-
-      "I'm an athlete — recovery / performance":{next:'name',set:{segment:'athlete',forWhom:'self'}},
-
-      "Local wellness in Cancun (HBOT, IV, peptides)":{next:'wellness_intro',set:{segment:'wellness'}},
-
-      "I'm a physician — ISSCA training / partnership":{next:'physician_intro',set:{segment:'physician'}}
-
-    },
-
-    prog:1
-
-  },
-
-  name:{text:"Great. What's your name?",expectInput:{field:'name',next:'condition'},prog:1},
-
-  condition:{
-
-    text:"<strong>\$personRef what's the main condition or goal?</strong>",
-
-    options:{
-
-      'Joint / orthopedic pain':        {next:'travel',set:{conditionCategory:'Orthopedic'},   score:{conditionFit:20}},
-
-      'Neurological condition':         {next:'travel',set:{conditionCategory:'Neurological'}, score:{conditionFit:20},flag:{doctorReview:true}},
-
-      'Autoimmune / inflammatory':      {next:'travel',set:{conditionCategory:'Autoimmune'},   score:{conditionFit:20},flag:{doctorReview:true}},
-
-      'Longevity / anti-aging':         {next:'travel',set:{conditionCategory:'Longevity'},    score:{conditionFit:20}},
-
-      'Pulmonary / cardiovascular':     {next:'travel',set:{conditionCategory:'Pulmonary/CV'}, score:{conditionFit:18},flag:{doctorReview:true}},
-
-      'Athletic recovery / performance':{next:'travel',set:{conditionCategory:'Sports'},       score:{conditionFit:18}},
-
-      'Senior wellness / vitality':     {next:'travel',set:{conditionCategory:'Senior Wellness'},score:{conditionFit:18}},
-
-      'Aesthetic / hair':               {next:'travel',set:{conditionCategory:'Aesthetic'},    score:{conditionFit:10}},
-
-      'Other condition':                {next:'cond_safety_check',set:{conditionCategory:'Other'},score:{conditionFit:10}}
-
-    },
-
-    prog:2
-
-  },
-
-  cond_safety_check:{
-
-    text:"Quick safety check: does the condition involve any of the following?\n\n<em>Active cancer, severe infection, unstable acute condition, or pregnancy.</em>",
-
-    options:{
-
-      'None of those':    {next:'travel'},
-
-      'Yes, one of those':{next:'fail_safety',flag:{hardFail:'safety'}}
-
-    },
-
-    prog:2
-
-  },
-
-  fail_safety:{
-
-    text:"Thanks for sharing this, \$name. For <strong>safety reasons</strong>, we can't proceed with a regenerative evaluation for active acute conditions, ongoing oncology, or unstable cases.\n\nThese cases require specialized medical care that's outside the scope of our protocols. I wish you the very best in your medical journey.",
-
-    options:{},prog:2,summary:true
-
-  },
-
-  travel:{
-
-    text:"Important point: our core cellular protocols are administered <em>in-person in Cancun</em> with fresh cells from the lab. We coordinate airport pickup, guest house, and recovery by the sea.\n<div class='quote'>The experience is part of the outcome.</div>\n<strong>Can you travel to Cancun?</strong>",
-
-    options:{
-
-      'Yes, valid passport':         {next:'budget',set:{travel:'Yes'},score:{travelScore:30}},
-
-      'Yes, need to renew passport': {next:'budget',set:{travel:'Yes — renew'},score:{travelScore:25}},
-
-      'Need to arrange it':          {next:'budget',set:{travel:'Maybe'},score:{travelScore:12}},
-
-      "Can't travel":                {next:'fail_travel',set:{travel:'No'},flag:{hardFail:'travel'}}
-
-    },
-
-    prog:3
-
-  },
-
-  fail_travel:{
-
-    text:"Understood. Our core cellular protocols require being on-site in Cancun, so for now they aren't a fit.\n\nIf you'd like, we also offer educational content or our local Recovery Menu. What would you prefer?",
-
-    options:{
-
-      'Tell me about the Recovery Menu':{next:'wellness_intro',set:{segment:'wellness'}},
-
-      'Send me educational content':{next:'contact_capture'},
-
-      'Understood, thanks':{next:'end_polite'}
-
-    },
-
-    prog:3,summary:true
-
-  },
-
-  budget:{
-
-    text:"Important to know: our protocols are an <strong>out-of-pocket expense</strong> — they are <strong>not covered by health insurance</strong> of any kind.\n\nThe exact cost is determined after medical review, based on your personalized protocol.\n\n<strong>Are you comfortable with an out-of-pocket procedure?</strong>",
-
-    options:{
-
-      'Yes, understood':                   {next:'timeline',set:{budget:'Yes confirmed'},score:{budgetScore:25}},
-
-      'I need to understand the cost first':{next:'timeline',set:{budget:'Needs info'},score:{budgetScore:15}},
-
-      'I need to check my options':        {next:'timeline',set:{budget:'Limited'},score:{budgetScore:8}},
-
-      'This is an issue for me':           {next:'fail_budget',set:{budget:'No'},flag:{hardFail:'budget'}}
-
-    },
-
-    prog:4
-
-  },
-
-  fail_budget:{
-
-    text:"I appreciate your honesty. The main regenerative protocol requires a significant investment.\n\nIf you're interested, our local Recovery Menu may be a good alternative, or we can send you educational content.",
-
-    options:{
-
-      'Tell me about the Recovery Menu':{next:'wellness_intro',set:{segment:'wellness'}},
-
-      'Send me educational content':{next:'contact_capture'},
-
-      'Understood, thanks':{next:'end_polite'}
-
-    },
-
-    prog:4,summary:true
-
-  },
-
-  timeline:{
-
-    text:"<strong>When would you like to move forward?</strong>",
-
-    options:{
-
-      'As soon as possible':  {next:'final',set:{timeline:'Immediate'},score:{timelineScore:10}},
-
-      'Within 30 days':       {next:'final',set:{timeline:'30 days'},score:{timelineScore:10}},
-
-      'In 1-3 months':        {next:'final',set:{timeline:'1-3 months'},score:{timelineScore:6}},
-
-      'Later / just exploring':{next:'final',set:{timeline:'3+ months'},score:{timelineScore:2}}
-
-    },
-
-    prog:4
-
-  },
-
-  final:{
-
-    text:"Thanks for the info, \$name. Let me put together a quick summary and the next responsible step…",
-
-    options:{},prog:5,summary:true,chain:'final_handoff'
-
-  },
-
-  final_handoff:{options:{},prog:5},
-
-  contact_capture:{
-
-    text:"Almost done — what's your <strong>phone number</strong>?\n\n<em>e.g., +1 555 000 0000</em>",
-
-    expectInput:{field:'phone',next:'capture_email'},
-
-    prog:5
-
-  },
-
-  capture_email:{
-
-    text:"And your <strong>email address</strong>?",
-
-    expectInput:{field:'email',next:'end_handoff'},
-
-    prog:5
-
-  },
-
-  end_handoff:{
-
-    text:"Done, \$name! Your case is registered.\n\nA coordinator from <strong>Cellular Institute</strong> will reach out to your phone and email shortly.\n<div class='quote'>We're here to see if there's a responsible way to support you.</div>",
-
-    options:{},prog:5
-
-  },
-
-  end_polite:{
-
-    text:"Perfect. We're here whenever you're ready, \$name.",
-
-    options:{},prog:5
-
-  },
-
-  wellness_intro:{
-
-    text:"Our <strong>Recovery & Wellness Menu</strong> in Cancun offers lower-ticket services — ideal for residents, expats, tourists, and athletes.\n\nIncludes: <em>HBOT, EBOO/EVO, IV therapy, pharmaceutical peptides, red light, PEMF, ozone, diagnostics.</em>\n\nWe also offer <strong>recurring memberships</strong> (Recovery, Longevity, HBOT, Executive).",
-
-    options:{'Continue':{next:'wellness_name'}},
-
-    prog:1
-
-  },
-
-  wellness_name:{
-
-    text:"What's your name?",
-
-    expectInput:{field:'name',next:'wellness_interest'},
-
-    prog:1
-
-  },
-
-  wellness_interest:{
-
-    text:"Nice to meet you, \$name. <strong>Which service are you most interested in?</strong>",
-
-    options:{
-
-      'HBOT (hyperbaric oxygen)':{next:'wellness_timing',set:{wellnessInterest:'HBOT'}},
-
-      'IV therapy / vitamins':{next:'wellness_timing',set:{wellnessInterest:'IV'}},
-
-      'Pharmaceutical peptides':{next:'wellness_timing',set:{wellnessInterest:'Peptides'}},
-
-      'EBOO / EVO / ozone':{next:'wellness_timing',set:{wellnessInterest:'EBOO/Ozone'}},
-
-      'Red light / PEMF / recovery':{next:'wellness_timing',set:{wellnessInterest:'Recovery tech'}},
-
-      'Recurring membership':{next:'wellness_timing',set:{wellnessInterest:'Membership'}},
-
-      'Diagnostics / labs':{next:'wellness_timing',set:{wellnessInterest:'Diagnostics'}}
-
-    },
-
-    prog:3
-
-  },
-
-  wellness_timing:{
-
-    text:"<strong>When would you like to book?</strong>",
-
-    options:{
-
-      'This week':    {next:'wellness_final',set:{wellnessTiming:'This week'}},
-
-      'This month':   {next:'wellness_final',set:{wellnessTiming:'This month'}},
-
-      'Just exploring':{next:'wellness_final',set:{wellnessTiming:'Exploring'}}
-
-    },
-
-    prog:4
-
-  },
-
-  wellness_final:{
-
-    text:"Perfect, \$name. I'll log your request so a Recovery Menu coordinator can reach out with schedules, pricing, and, if you're interested, membership options.",
-
-    options:{'Continue to contact':{next:'contact_capture'}},
-
-    prog:5,summary:true
-
-  },
-
-  physician_intro:{
-
-    text:"Welcome, doctor.\n\nThrough <em>ISSCA (International Society for Stem Cell Application)</em> and <em>Global Stem Cells Group</em>, we've been training physicians in regenerative medicine worldwide for <strong>15+ years</strong>.\n\nThe Cancun clinic functions as a <em>hands-on training center</em> with live procedures, advanced protocols, and access to the Cellgenic lab.",
-
-    options:{'Continue':{next:'physician_name'}},
-
-    prog:1
-
-  },
-
-  physician_name:{
-
-    text:"What's your full name, doctor?",
-
-    expectInput:{field:'name',next:'physician_specialty'},
-
-    prog:1
-
-  },
-
-  physician_specialty:{
-
-    text:"Nice to meet you, Dr. \$name. <strong>What's your specialty?</strong>",
-
-    options:{
-
-      'Regenerative medicine / longevity':{next:'physician_interest',set:{physicianSpecialty:'Regenerative'}},
-
-      'Orthopedics / trauma':             {next:'physician_interest',set:{physicianSpecialty:'Orthopedics'}},
-
-      'Internal / family medicine':       {next:'physician_interest',set:{physicianSpecialty:'Internal/Family'}},
-
-      'Aesthetic / dermatology':          {next:'physician_interest',set:{physicianSpecialty:'Aesthetic'}},
-
-      'Other specialty':                  {next:'physician_interest',set:{physicianSpecialty:'Other'}}
-
-    },
-
-    prog:2
-
-  },
-
-  physician_interest:{
-
-    text:"<strong>What's your primary interest?</strong>",
-
-    options:{
-
-      'ISSCA training / certification':{next:'physician_final',set:{physicianInterest:'ISSCA training'}},
-
-      'Cellgenic distribution at my clinic':{next:'physician_final',set:{physicianInterest:'Cellgenic distribution'}},
-
-      'Clinical partnership / referrals':{next:'physician_final',set:{physicianInterest:'Partnership'}},
-
-      'Visit the clinic / shadowing':{next:'physician_final',set:{physicianInterest:'Visit/Shadowing'}},
-
-      'General information':{next:'physician_final',set:{physicianInterest:'General info'}}
-
-    },
-
-    prog:4
-
-  },
-
-  physician_final:{
-
-    text:"Excellent, Dr. \$name. I'll log your request so the <strong>ISSCA / Global Stem Cells Group</strong> team can reach out with info on programs, course schedules, commercial terms, and next steps.",
-
-    options:{'Continue to contact':{next:'contact_capture'}},
-
-    prog:5,summary:true
-
-  }
-
+// ─────────────────────────────────────────
+// CONVERSATION STEPS
+// ─────────────────────────────────────────
+const STEPS = [
+  'welcome',
+  'first_name',
+  'last_name',
+  'phone',
+  'email',
+  'segment',
+  'condition',
+  'travel',
+  'budget',
+  'timeline',
+  'summary'
+];
+
+let currentStep = 0;
+const progressMap = {
+  welcome: 0, first_name: 10, last_name: 20, phone: 30, email: 40,
+  segment: 50, condition: 60, travel: 70, budget: 80, timeline: 90, summary: 100
 };
 
-function getPersonRefs(){
+// ─────────────────────────────────────────
+// DOM HELPERS
+// ─────────────────────────────────────────
+const messagesEl  = document.getElementById('chatMessages');
+const inputAreaEl = document.getElementById('inputArea');
+const progressEl  = document.getElementById('progressFill');
 
-  if(lead.segment==='caregiver'){
-
-    return{personRef:'For your family member —'};
-
-  }
-
-  return{personRef:'\$name —'};
-
+function setProgress(step) {
+  progressEl.style.width = (progressMap[step] || 0) + '%';
 }
 
-function interpolate(text){
-
-  if(!text)return '';
-
-  const refs=getPersonRefs();
-
-  let out=text.replace(/\$name/g,lead.name||'');
-
-  for(const k in refs){
-
-    out=out.replace(new RegExp('\\\$'+k,'g'),refs[k]);
-
-  }
-
-  out=out.replace(/\$name/g,lead.name||'');
-
-  return out.replace(/\n/g,'<br>');
-
+function scrollBottom() {
+  messagesEl.scrollTop = messagesEl.scrollHeight;
 }
 
-function applySetScoreFlag(opt){
-
-  if(!opt)return;
-
-  if(opt.set)Object.assign(lead,opt.set);
-
-  if(opt.score){for(const k in opt.score)lead[k]=(lead[k]||0)+opt.score[k];}
-
-  if(opt.flag)Object.assign(lead,opt.flag);
-
+function addMsg(text, role = 'bot', isHTML = false) {
+  const wrapper = document.createElement('div');
+  wrapper.className = 'msg ' + role;
+  const avatar = document.createElement('div');
+  avatar.className = 'msg-avatar';
+  avatar.textContent = role === 'bot' ? '🧬' : '👤';
+  const bubble = document.createElement('div');
+  bubble.className = 'msg-bubble';
+  if (isHTML) bubble.innerHTML = text;
+  else bubble.textContent = text;
+  wrapper.appendChild(avatar);
+  wrapper.appendChild(bubble);
+  messagesEl.appendChild(wrapper);
+  scrollBottom();
+  return bubble;
 }
 
-const summaryStatusMap = {
+function showTyping() {
+  const wrapper = document.createElement('div');
+  wrapper.className = 'msg bot';
+  wrapper.id = 'typingIndicator';
+  const avatar = document.createElement('div');
+  avatar.className = 'msg-avatar';
+  avatar.textContent = '🧬';
+  const bubble = document.createElement('div');
+  bubble.className = 'msg-bubble typing-dots';
+  bubble.innerHTML = '<span></span><span></span><span></span>';
+  wrapper.appendChild(avatar);
+  wrapper.appendChild(bubble);
+  messagesEl.appendChild(wrapper);
+  scrollBottom();
+}
 
-  hot:      { label:'Ready for medical review',          action:'A <strong>senior coordinator</strong> will reach out within about <strong>2 hours</strong> to begin your medical review.' },
+function hideTyping() {
+  const t = document.getElementById('typingIndicator');
+  if (t) t.remove();
+}
 
-  warm:     { label:'Good potential — a few details to clarify', action:'A <strong>coordinator</strong> will reach out within about <strong>48 hours</strong> to walk through the remaining details with you.' },
+function botSay(text, delay = 600, isHTML = false) {
+  return new Promise(resolve => {
+    showTyping();
+    setTimeout(() => {
+      hideTyping();
+      addMsg(text, 'bot', isHTML);
+      resolve();
+    }, delay);
+  });
+}
 
-  cold:     { label:'Early in your research',            action:'We\'ll send you our <strong>Patient Guide</strong> so you can take your time, and we\'re here whenever you\'re ready.' },
+function clearInput() {
+  inputAreaEl.innerHTML = '';
+}
 
-  doctor:   { label:'Specialized medical review needed', action:'Our <strong>medical team</strong> will personally review your records before discussing any next steps.' },
+// ─────────────────────────────────────────
+// STEP RENDERERS
+// ─────────────────────────────────────────
 
-  unq:      { label:'Not the right fit at this time',    action:'Thank you for your time — we\'ve noted your interest and wish you the very best.' },
+function renderQuickReplies(options, onSelect) {
+  clearInput();
+  const container = document.createElement('div');
+  container.className = 'cw-quick-replies';
+  options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'qr-btn';
+    btn.textContent = opt.label || opt;
+    btn.addEventListener('click', () => {
+      container.querySelectorAll('.qr-btn').forEach(b => b.disabled = true);
+      btn.classList.add('selected');
+      addMsg(opt.label || opt, 'user');
+      onSelect(opt.value !== undefined ? opt.value : (opt.label || opt));
+    });
+    container.appendChild(btn);
+  });
+  inputAreaEl.appendChild(container);
+}
 
-  wellness: { label:'Recovery & Wellness inquiry',       action:'A <strong>Recovery Menu coordinator</strong> will reach out with schedules, pricing, and membership options.' },
-
-  physician:{ label:'Professional inquiry',              action:'The <strong>ISSCA / Global Stem Cells Group</strong> team will follow up with information on programs and next steps.' }
-
-};
-
-function buildHandoffText(){
-
-  const status=leadStatus();
-
-  const summary=buildSummaryCard();
-
-  const handoff={
-
-    hot:`Excellent, ${lead.name}. Based on what you've shared, your case looks like a <strong>strong candidate for medical review</strong>.\n\nA <strong>senior coordinator</strong> will reach out within <strong>2 hours</strong> to collect your records and schedule the medical review. Shall we proceed?`,
-
-    warm:`Thanks, ${lead.name}. Your case shows <strong>good potential</strong>, with a few points to clarify before medical review.\n\nA coordinator will reach out within <strong>48 hours</strong>. Shall we proceed?`,
-
-    cold:`Thanks, ${lead.name}. It sounds like you're still in <em>early research</em>. I'd recommend receiving our Patient Guide and reconnecting when you're closer to a decision. Should we send it?`,
-
-    doctor:`${lead.name}, since your condition (${lead.conditionCategory}) requires <strong>specialized medical review</strong>, I won't proceed with a standard evaluation.\n\nA coordinator will reach out to collect records and forward them to the medical team. Only after that can we discuss whether you're a candidate. Shall we proceed?`,
-
-    unq:`Thanks for your time, ${lead.name}. We can't move forward right now, but we appreciate your interest.`,
-
-    wellness:`Thanks, ${lead.name}. Your request to the <strong>Recovery & Wellness Menu</strong> is registered — a coordinator will reach out with schedules, pricing, and membership options.`,
-
-    physician:`Thanks, Dr. ${lead.name}. Your request to the <strong>ISSCA / Global Stem Cells Group</strong> team is registered — you'll receive information about programs and next steps.`
-
+function renderTextInput(placeholder, onSubmit, inputType = 'text') {
+  clearInput();
+  const row = document.createElement('div');
+  row.className = 'cw-text-input-row';
+  const input = document.createElement('input');
+  input.type = inputType;
+  input.className = 'cw-text-input';
+  input.placeholder = placeholder;
+  const btn = document.createElement('button');
+  btn.className = 'cw-send-btn';
+  btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24"><path d="M2 21l21-9-21-9v7l15 2-15 2z"/></svg>';
+  const submit = () => {
+    const val = input.value.trim();
+    if (!val) return;
+    input.disabled = true; btn.disabled = true;
+    addMsg(val, 'user');
+    onSubmit(val);
   };
-
-  return summary+'<br>'+handoff[status];
-
+  btn.addEventListener('click', submit);
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') submit(); });
+  row.appendChild(input);
+  row.appendChild(btn);
+  inputAreaEl.appendChild(row);
+  setTimeout(() => input.focus(), 100);
 }
 
-function buildSummaryCard(){
+function renderPhoneInput(onSubmit) {
+  clearInput();
+  const row = document.createElement('div');
+  row.className = 'cw-phone-row cw-text-input-row';
 
-  const status=leadStatus();
+  const select = document.createElement('select');
+  select.className = 'cw-country-select';
+  const countryCodes = [
+    {code: '+1',   label: '🇺🇸 +1 US/CA'},
+    {code: '+52',  label: '🇲🇽 +52 MX'},
+    {code: '+44',  label: '🇬🇧 +44 UK'},
+    {code: '+34',  label: '🇪🇸 +34 ES'},
+    {code: '+49',  label: '🇩🇪 +49 DE'},
+    {code: '+33',  label: '🇫🇷 +33 FR'},
+    {code: '+39',  label: '🇮🇹 +39 IT'},
+    {code: '+55',  label: '🇧🇷 +55 BR'},
+    {code: '+54',  label: '🇦🇷 +54 AR'},
+    {code: '+57',  label: '🇨🇴 +57 CO'},
+    {code: '+56',  label: '🇨🇱 +56 CL'},
+    {code: '+51',  label: '🇵🇪 +51 PE'},
+    {code: '+593', label: '🇪🇨 +593 EC'},
+    {code: '+502', label: '🇬🇹 +502 GT'},
+    {code: '+506', label: '🇨🇷 +506 CR'},
+    {code: '+61',  label: '🇦🇺 +61 AU'},
+    {code: '+81',  label: '🇯🇵 +81 JP'},
+    {code: '+82',  label: '🇰🇷 +82 KR'},
+    {code: '+86',  label: '🇨🇳 +86 CN'},
+    {code: '+91',  label: '🇮🇳 +91 IN'},
+    {code: '+971', label: '🇦🇪 +971 AE'},
+    {code: '+966', label: '🇸🇦 +966 SA'},
+    {code: '+972', label: '🇮🇱 +972 IL'},
+    {code: '+7',   label: '🇷🇺 +7 RU'},
+    {code: '+27',  label: '🇿🇦 +27 ZA'},
+    {code: '+234', label: '🇳🇬 +234 NG'},
+    {code: '+20',  label: '🇪🇬 +20 EG'},
+    {code: '+212', label: '🇲🇦 +212 MA'},
+  ];
+  countryCodes.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c.code;
+    opt.textContent = c.label;
+    select.appendChild(opt);
+  });
 
-  const sm=summaryStatusMap[status];
+  const input = document.createElement('input');
+  input.type = 'tel';
+  input.className = 'cw-text-input';
+  input.placeholder = 'Phone number';
 
-  const valClass=(v,ok)=>ok?'sc-val ok':(v&&v!=='—'?'sc-val warn':'sc-val bad');
+  const btn = document.createElement('button');
+  btn.className = 'cw-send-btn';
+  btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24"><path d="M2 21l21-9-21-9v7l15 2-15 2z"/></svg>';
 
-  let rows=[];
+  const submit = () => {
+    const num = input.value.trim();
+    if (!num) return;
+    input.disabled = true; btn.disabled = true; select.disabled = true;
+    const full = select.value + ' ' + num;
+    addMsg(full, 'user');
+    onSubmit(full);
+  };
+  btn.addEventListener('click', submit);
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') submit(); });
 
-  if(lead.segment==='wellness'){
+  row.appendChild(select);
+  row.appendChild(input);
+  row.appendChild(btn);
+  inputAreaEl.appendChild(row);
+  setTimeout(() => input.focus(), 100);
+}
 
-    rows=[
+// ─────────────────────────────────────────
+// SCORING
+// ─────────────────────────────────────────
+function calcScore() {
+  let s = 0;
+  const cond = lead.condition.toLowerCase();
+  if (['als','parkinson','ms','stroke','spinal cord'].some(k => cond.includes(k))) s += 40;
+  else if (['arthritis','chronic pain','sports injury','back pain'].some(k => cond.includes(k))) s += 25;
+  else s += 15;
+  if (lead.travel === 'Yes, I can travel') s += 20;
+  else if (lead.travel === 'Maybe, need more info') s += 10;
+  const b = lead.budget.toLowerCase();
+  if (b.includes('15,000') || b.includes('20,000') || b.includes('no limit')) s += 30;
+  else if (b.includes('10,000')) s += 20;
+  else if (b.includes('5,000')) s += 10;
+  const t = lead.timeline.toLowerCase();
+  if (t.includes('asap') || t.includes('1–3') || t.includes('1-3')) s += 10;
+  else if (t.includes('3–6') || t.includes('3-6')) s += 5;
+  return s;
+}
 
-      ['Name',lead.name||'—',!!lead.name],
+function scoreLabel(s) {
+  if (s >= 70) return { label: '🔥 Hot Lead', cls: 'score-hot', status: 'HOT' };
+  if (s >= 40) return { label: '🌡 Warm Lead', cls: 'score-warm', status: 'WARM' };
+  return { label: '❄️ Cool Lead', cls: 'score-cool', status: 'COOL' };
+}
 
-      ['Interest','Recovery & Wellness',true],
+// ─────────────────────────────────────────
+// FLOW CONTROLLER
+// ─────────────────────────────────────────
+async function goToStep(step) {
+  setProgress(step);
+  currentStep = STEPS.indexOf(step);
 
-      ['Service',lead.wellnessInterest||'—',!!lead.wellnessInterest],
-
-      ['Timing',lead.wellnessTiming||'—',!!lead.wellnessTiming]
-
-    ];
-
-  }else if(lead.segment==='physician'){
-
-    rows=[
-
-      ['Name','Dr. '+(lead.name||'—'),!!lead.name],
-
-      ['Interest','Professional / ISSCA',true],
-
-      ['Specialty',lead.physicianSpecialty||'—',!!lead.physicianSpecialty],
-
-      ['Focus',lead.physicianInterest||'—',!!lead.physicianInterest]
-
-    ];
-
-  }else{
-
-    rows=[
-
-      ['Name',lead.name||'—',!!lead.name],
-
-      ['Looking for',({patient:'Treatment for myself',caregiver:'Support for a family member',athlete:'Athlete recovery / performance'}[lead.segment])||'—',!!lead.segment],
-
-      ['Condition',lead.conditionCategory||'—',!!lead.conditionCategory],
-
-      ['Travel',lead.travel||'—',lead.travel==='Yes'],
-
-      ['Budget',lead.budget||'—',['Yes confirmed'].includes(lead.budget)],
-
-      ['Timeline',lead.timeline||'—',['Immediate','30 days'].includes(lead.timeline)]
-
-    ];
-
+  if (step === 'welcome') {
+    await botSay('👋 Welcome to <strong>Cellular Institute</strong>! I'm your AI Coordinator for regenerative medicine treatments in Cancún.', 800, true);
+    await botSay('I'll help match you with the right stem cell or regenerative therapy — and connect you with our medical team.', 700);
+    await botSay('Ready to get started?', 400);
+    renderQuickReplies(['Yes, go ahead', 'Tell me more first'], val => {
+      if (val === 'Tell me more first') {
+        botSay('Of course! We specialize in advanced stem cell therapies, PRP treatments, and regenerative medicine — with world-class doctors in Cancún, Mexico. Thousands of patients have seen life-changing results. Ready now?', 700).then(() => {
+          renderQuickReplies(['Yes, let's start'], () => goToStep('first_name'));
+        });
+      } else {
+        goToStep('first_name');
+      }
+    });
   }
 
-  const rowsHtml=rows.map(([k,v,ok])=>`<div class="sc-row"><span class="sc-key">${k}</span><span class="${valClass(v,ok)}">${v}</span></div>`).join('');
+  else if (step === 'first_name') {
+    await botSay('Great! Let's start with a few quick details so we can personalize your experience. 😊', 600);
+    await botSay('What's your <strong>first name</strong>?', 400, true);
+    renderTextInput('Your first name', val => {
+      lead.firstName = val;
+      goToStep('last_name');
+    });
+  }
 
-  return `<div class="summary-card">
+  else if (step === 'last_name') {
+    await botSay('Nice to meet you, ' + lead.firstName + '! What's your <strong>last name</strong>?', 500, true);
+    renderTextInput('Your last name', val => {
+      lead.lastName = val;
+      goToStep('phone');
+    });
+  }
 
-    <div class="sc-title">
+  else if (step === 'phone') {
+    await botSay('What's the best phone number to reach you? (Select your country code first)', 600);
+    renderPhoneInput(val => {
+      lead.phone = val;
+      goToStep('email');
+    });
+  }
 
-      <svg viewBox="0 0 24 24" fill="none" stroke="#7A412D" stroke-width="1.8" stroke-linecap="round">
+  else if (step === 'email') {
+    await botSay('And your <strong>email address</strong>?', 500, true);
+    renderTextInput('your@email.com', async val => {
+      lead.email = val;
+      // ── HUBSPOT SAVE POINT 1: Create contact immediately ──
+      hsSave({
+        firstname: lead.firstName,
+        lastname:  lead.lastName,
+        phone:     lead.phone,
+        email:     lead.email,
+        hs_lead_status: 'IN_PROGRESS',
+        lead_source: 'CI Chatbot'
+      });
+      await goToStep('segment');
+    }, 'email');
+  }
 
-        <path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/>
+  else if (step === 'segment') {
+    await botSay('Perfect, ' + lead.firstName + '! Now, which best describes you?', 600);
+    renderQuickReplies([
+      { label: '🙋 Patient',    value: 'Patient' },
+      { label: '❤️ Caregiver', value: 'Caregiver' },
+      { label: '🏃 Athlete',   value: 'Athlete' },
+      { label: '🌿 Wellness',  value: 'Wellness' },
+      { label: '🩺 Physician', value: 'Physician' }
+    ], async val => {
+      lead.segment = val;
+      hsSave({ ci_segment: val });
 
-      </svg>
+      if (val === 'Wellness') {
+        await botSay('Wonderful! Our wellness programs focus on anti-aging, energy optimization, and full-body rejuvenation. Let me ask a couple more questions.', 700);
+        await goToStep('condition');
+      } else if (val === 'Physician') {
+        await botSay('Thank you, Doctor! We have dedicated physician collaboration programs. Let me gather a few more details.', 700);
+        await goToStep('condition');
+      } else {
+        await goToStep('condition');
+      }
+    });
+  }
 
-      What you've shared so far
+  else if (step === 'condition') {
+    let condQuestion = 'What condition or health goal are you looking to address?';
+    if (lead.segment === 'Athlete') condQuestion = 'What injury or performance goal brings you to us?';
+    if (lead.segment === 'Wellness') condQuestion = 'What wellness goal are you focusing on?';
+    if (lead.segment === 'Physician') condQuestion = 'What condition does your patient have?';
+    await botSay(condQuestion, 600);
 
-    </div>
+    const conditionOpts = [
+      'ALS', 'Parkinson's Disease', 'Multiple Sclerosis',
+      'Arthritis / Joint Pain', 'Sports Injury / Recovery',
+      'Stroke Rehabilitation', 'Spinal Cord / Back Pain',
+      'Chronic Pain', 'Anti-Aging / Wellness', 'Other'
+    ];
+    renderQuickReplies(conditionOpts, async val => {
+      lead.condition = val;
+      hsSave({ ci_condition: val });
 
-    <div class="sc-grid">${rowsHtml}</div>
+      if (val === 'Other') {
+        clearInput();
+        await botSay('Please tell us more about the condition or health goal:', 400);
+        renderTextInput('Describe your condition or goal', async otherVal => {
+          lead.condition = otherVal;
+          hsSave({ ci_condition: otherVal });
+          await goToStep('travel');
+        });
+      } else {
+        await goToStep('travel');
+      }
+    });
+  }
 
-    <div class="sc-status-row">
+  else if (step === 'travel') {
+    await botSay('Our treatments are performed at our world-class clinic in <strong>Cancún, Mexico</strong>. Are you able to travel?', 600, true);
+    renderQuickReplies([
+      'Yes, I can travel',
+      'Maybe, need more info',
+      'No, looking for local options'
+    ], async val => {
+      lead.travel = val;
+      hsSave({ ci_can_travel: val });
+      await goToStep('budget');
+    });
+  }
 
-      <div class="sc-status-block">
+  else if (step === 'budget') {
+    await botSay('To help match you with the right program, what's your approximate <strong>out-of-pocket budget</strong>?', 600, true);
+    renderQuickReplies([
+      'Under $5,000',
+      '$5,000 – $10,000',
+      '$10,000 – $15,000',
+      '$15,000 – $20,000',
+      '$20,000+',
+      'Not sure yet'
+    ], async val => {
+      lead.budget = val;
+      hsSave({ ci_budget: val });
+      await goToStep('timeline');
+    });
+  }
 
-        <div class="sc-status-label">Next step</div>
+  else if (step === 'timeline') {
+    await botSay('When are you hoping to begin treatment?', 500);
+    renderQuickReplies([
+      'ASAP',
+      '1–3 months',
+      '3–6 months',
+      '6+ months',
+      'Just researching'
+    ], async val => {
+      lead.timeline = val;
+      hsSave({ ci_timeline: val });
+      await goToStep('summary');
+    });
+  }
 
-        <div class="sc-status-val">${sm.label}</div>
+  else if (step === 'summary') {
+    const score = calcScore();
+    lead.score = score;
+    const { label, cls, status } = scoreLabel(score);
+    lead.status = status;
 
-      </div>
-
-    </div>
-
-    <div class="sc-action">${sm.action}</div>
-
-  </div>`;
-
-}
-
-function addBot(html,replies,opts={}){
-
-  const row=document.createElement('div');
-
-  row.className='row bot';
-
-  const av=document.createElement('div');
-
-  av.className='bavatar';
-
-  av.textContent='CI';
-
-  const bub=document.createElement('div');
-
-  bub.className='bubble';
-
-  bub.innerHTML=html;
-
-  row.appendChild(av);
-
-  row.appendChild(bub);
-
-  msgs.appendChild(row);
-
-  if(replies&&replies.length){
-
-    const qw=document.createElement('div');
-
-    qw.className='qr-wrap';
-
-    replies.forEach(r=>{
-
-      const b=document.createElement('button');
-
-      b.className='qr'+(opts.dangerLabels&&opts.dangerLabels.includes(r)?' danger':'');
-
-      b.textContent=r;
-
-      b.onclick=()=>{qw.remove();send(r);};
-
-      qw.appendChild(b);
-
+    // ── HUBSPOT SAVE POINT 2: Full update with score & status ──
+    hsSave({
+      ci_lead_score: score,
+      ci_lead_status: status,
+      hs_lead_status: status === 'HOT' ? 'CONNECTED' : (status === 'WARM' ? 'OPEN' : 'NEW'),
+      ci_timeline: lead.timeline,
+      ci_budget: lead.budget,
+      ci_can_travel: lead.travel,
+      ci_segment: lead.segment,
+      ci_condition: lead.condition,
+      lead_source: 'CI Chatbot'
     });
 
-    msgs.appendChild(qw);
-
-  }
-
-  msgs.scrollTop=msgs.scrollHeight;
-
-}
-
-function addUser(text){
-
-  const row=document.createElement('div');
-
-  row.className='row user';
-
-  const bub=document.createElement('div');
-
-  bub.className='bubble';
-
-  bub.textContent=text;
-
-  row.appendChild(bub);
-
-  msgs.appendChild(row);
-
-  msgs.scrollTop=msgs.scrollHeight;
-
-}
-
-function showTyping(){
-
-  const row=document.createElement('div');
-
-  row.className='row bot';
-
-  row.id='typ';
-
-  row.innerHTML='<div class="bavatar">CI</div><div class="bubble" style="padding:10px 15px"><div class="typing-dots"><span></span><span></span><span></span></div></div>';
-
-  msgs.appendChild(row);
-
-  msgs.scrollTop=msgs.scrollHeight;
-
-}
-
-function hideTyping(){const t=document.getElementById('typ');if(t)t.remove();}
-
-function renderStep(stepId){
-
-  const step=steps[stepId];
-
-  if(!step)return;
-
-  currentStep=stepId;
-
-  if(step.prog!==undefined)setProgress(step.prog+1);
-
-  if(step.chain==='final_handoff'){
-
-    addBot(interpolate(step.text),null);
-
-    setTimeout(()=>{
-
-      showTyping();
-
-      setTimeout(()=>{hideTyping();renderStep('final_handoff');},800);
-
-    },400);
-
-    return;
-
-  }
-
-  if(stepId==='final_handoff'){
-
-    const status=leadStatus();
-
-    const text=buildHandoffText();
-
-    let replies;
-
-    if(['hot','warm','doctor'].includes(status))replies=['Yes, contact me',"I'd rather think it over"];
-
-    else if(status==='cold')replies=['Yes, send me content','Not right now'];
-
-    else replies=['Understood, thanks'];
-
-    addBot(text,replies);
-
-    steps.final_handoff.options={
-
-      'Yes, contact me':{next:'contact_capture'},
-
-      "I'd rather think it over":{next:'end_polite'},
-
-      'Yes, send me content':{next:'contact_capture'},
-
-      'Not right now':{next:'end_polite'},
-
-      'Understood, thanks':{next:'end_polite'}
-
-    };
-
-    return;
-
-  }
-
-  let html=interpolate(step.text);
-
-  if(step.summary)html+=buildSummaryCard();
-
-  const replyLabels=step.options?Object.keys(step.options):[];
-
-  const dangerLabels=step.options?Object.entries(step.options).filter(([_,v])=>v.flag&&v.flag.hardFail).map(([k])=>k):[];
-
-  addBot(html,replyLabels,{dangerLabels});
-
-  if(step.expectInput)awaitingInput=step.expectInput;
-
-}
-
-function send(text){
-
-  addUser(text);
-
-  showTyping();
-
-  setTimeout(()=>{
-
-    hideTyping();
-
-    if(awaitingInput){
-
-      const cfg=awaitingInput;
-
-      awaitingInput=null;
-
-      lead[cfg.field]=text;
-
-      renderStep(cfg.next);
-
-      return;
-
+    await botSay('Thank you, ' + lead.firstName + '! Here's a summary of your profile:', 700);
+
+    const summaryHTML = `
+      <div class="summary-card">
+        <h3>📋 Your Lead Profile</h3>
+        <div class="summary-row"><span class="label">Name</span><span class="value">${lead.firstName} ${lead.lastName}</span></div>
+        <div class="summary-row"><span class="label">Phone</span><span class="value">${lead.phone}</span></div>
+        <div class="summary-row"><span class="label">Email</span><span class="value">${lead.email}</span></div>
+        <div class="summary-row"><span class="label">Segment</span><span class="value">${lead.segment}</span></div>
+        <div class="summary-row"><span class="label">Condition</span><span class="value">${lead.condition}</span></div>
+        <div class="summary-row"><span class="label">Can Travel</span><span class="value">${lead.travel}</span></div>
+        <div class="summary-row"><span class="label">Budget</span><span class="value">${lead.budget}</span></div>
+        <div class="summary-row"><span class="label">Timeline</span><span class="value">${lead.timeline}</span></div>
+        <div style="margin-top:10px;text-align:center;">
+          <span class="score-badge ${cls}">${label}</span>
+        </div>
+      </div>
+    `;
+    addMsg(summaryHTML, 'bot', true);
+
+    await botSay('Your information has been saved. A member of our team will reach out to you shortly — usually within 24 hours.', 800);
+
+    if (status === 'HOT') {
+      await botSay('🔥 Based on your profile, you're a <strong>priority candidate</strong> for our regenerative programs. We'll have a coordinator contact you very soon!', 700, true);
+    } else if (status === 'WARM') {
+      await botSay('🌡 Great potential for treatment! Our team will review your profile and send you relevant program options.', 700);
+    } else {
+      await botSay('We appreciate your interest! Our team will send you educational resources and program information to help with your research.', 700);
     }
 
-    const step=steps[currentStep];
-
-    if(step&&step.options&&step.options[text]){
-
-      const opt=step.options[text];
-
-      applySetScoreFlag(opt);
-
-      renderStep(opt.next);
-
-      return;
-
-    }
-
-    addBot('Thanks for your message. Please select an option, or type <em>"speak to a coordinator"</em>.',null);
-
-    if(text.toLowerCase().includes('coordinator')||text.toLowerCase().includes('human')){
-
-      setTimeout(()=>renderStep('contact_capture'),600);
-
-    }
-
-  },700+Math.random()*500);
-
+    clearInput();
+    const restartBtn = document.createElement('button');
+    restartBtn.className = 'qr-btn';
+    restartBtn.textContent = '🔄 Start Over';
+    restartBtn.style.margin = '8px auto 0';
+    restartBtn.addEventListener('click', () => {
+      // Reset
+      Object.keys(lead).forEach(k => { lead[k] = typeof lead[k] === 'number' ? 0 : ''; });
+      hsContactId = null;
+      messagesEl.innerHTML = '';
+      clearInput();
+      goToStep('welcome');
+    });
+    const btnWrap = document.createElement('div');
+    btnWrap.className = 'cw-quick-replies';
+    btnWrap.style.justifyContent = 'center';
+    btnWrap.appendChild(restartBtn);
+    inputAreaEl.appendChild(btnWrap);
+  }
 }
 
-btn.onclick=()=>{
-
-  const v=inp.value.trim();
-
-  if(!v)return;
-
-  inp.value='';
-
-  send(v);
-
-};
-
-inp.addEventListener('keydown',e=>{if(e.key==='Enter')btn.click();});
-
-setTimeout(()=>renderStep('start'),500);
-
+// ─────────────────────────────────────────
+// START
+// ─────────────────────────────────────────
+goToStep('welcome');
 </script>
-
 </body>
-
 </html>
