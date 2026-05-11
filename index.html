@@ -155,7 +155,7 @@
   <div class="cw-footer">Powered by <a href="https://cellularinstitute.com" target="_blank">Cellular Institute</a></div>
 </div>
 <script>
-// HubSpot calls go through Vercel proxy — token never exposed in frontend code
+// HubSpot calls go through Vercel proxy â token never exposed in frontend code
 var PROXY_URL = 'https://ci-hubspot-proxy.vercel.app/api/hubspot';
 var hsContactId = null;
 
@@ -535,8 +535,7 @@ function goToStep(step) {
       ci_budget: lead.budget,
       ci_can_travel: lead.travel,
       ci_segment: lead.segment,
-      ci_condition: lead.condition,
-      lead_source: 'CI Chatbot'
+      ci_condition: lead.condition
     });
     botSay('Thank you, ' + lead.firstName + '! Here is a summary of your profile:', 700).then(function() {
       addMsg(buildSummaryHTML(score, sl.cls), 'bot', true);
