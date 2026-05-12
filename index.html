@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cellular Institute AI Coordinator v3</title>
+  <title>Cellular Institute AI Coordinator v4</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -68,6 +68,15 @@
     .bot .msg-bubble { background: var(--ci-light); color: #1F2937; border-bottom-left-radius: 4px; }
     .user .msg-bubble { background: var(--ci-teal); color: var(--ci-white); border-bottom-right-radius: 4px; }
     .msg-bubble strong { font-weight: 600; }
+    .section-divider {
+      display: flex; align-items: center; gap: 10px;
+      padding: 6px 4px; margin: 4px 0;
+      font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
+      color: var(--ci-gold); text-transform: uppercase;
+    }
+    .section-divider::before, .section-divider::after {
+      content: ''; flex: 1; height: 1px; background: var(--ci-border);
+    }
     .typing-dots span { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--ci-gray); margin: 0 2px; animation: bounce 1.2s infinite; }
     .typing-dots span:nth-child(2) { animation-delay: .2s; }
     .typing-dots span:nth-child(3) { animation-delay: .4s; }
@@ -155,15 +164,12 @@
   <div class="cw-footer">Powered by <a href="https://cellularinstitute.com" target="_blank">Cellular Institute</a></div>
 </div>
 <script>
-// HubSpot calls go through Vercel proxy â token never exposed in frontend code
+// HubSpot calls go through Vercel proxy — token never exposed in frontend code
 var PROXY_URL = 'https://ci-hubspot-proxy.vercel.app/api/hubspot';
 var hsContactId = null;
-
 // Serialized HubSpot writes: one in-flight request at a time, so a CREATE
 // completes (and we know the contactId) before any subsequent PATCH/CREATE fires.
-// This prevents the duplicate empty "--" contact bug.
 var hsQueue = Promise.resolve();
-
 function hsSave(props) {
   if (!props || Object.keys(props).length === 0) return hsQueue;
   hsQueue = hsQueue.then(function() {
@@ -189,7 +195,6 @@ function hsSave(props) {
   });
   return hsQueue;
 }
-
 function hsPatchNow(props) {
   if (!hsContactId) return;
   return fetch(PROXY_URL, {
@@ -201,21 +206,24 @@ function hsPatchNow(props) {
     else r.json().then(function(d){ console.warn('[CI] patch error:', d); });
   }).catch(function(e){ console.warn('[CI] patch error:', e); });
 }
-
 function hsPatch(props) { return hsSave(props); }
-
-var lead = { firstName:'', lastName:'', phone:'', email:'', segment:'', condition:'', travel:'', budget:'', timeline:'', score:0, status:'' };
-
-var STEPS = ['welcome','first_name','last_name','phone','email','segment','condition','travel','budget','timeline','summary'];
-var progressMap = { welcome:0, first_name:10, last_name:20, phone:30, email:40, segment:50, condition:60, travel:70, budget:80, timeline:90, summary:100 };
-
+var lead = {
+  firstName:'', lastName:'', phone:'', email:'',
+  condition:'', stemCellHistory:'', pricingAck:'',
+  travel:'', timeline:'',
+  score:0, status:''
+};
+var STEPS = ['welcome','first_name','last_name','phone','email','condition','stem_cell_history','pricing_ack','travel','timeline','summary'];
+var progressMap = {
+  welcome:0, first_name:9, last_name:18, phone:27, email:36,
+  condition:45, stem_cell_history:55, pricing_ack:65,
+  travel:78, timeline:90, summary:100
+};
 var messagesEl = document.getElementById('chatMessages');
 var inputAreaEl = document.getElementById('inputArea');
 var progressEl = document.getElementById('progressFill');
-
 function setProgress(step) { progressEl.style.width = (progressMap[step] || 0) + '%'; }
 function scrollBottom() { messagesEl.scrollTop = messagesEl.scrollHeight; }
-
 function addMsg(text, role, isHTML) {
   role = role || 'bot'; isHTML = isHTML || false;
   var wrapper = document.createElement('div');
@@ -233,7 +241,13 @@ function addMsg(text, role, isHTML) {
   scrollBottom();
   return bubble;
 }
-
+function addSectionDivider(label) {
+  var divider = document.createElement('div');
+  divider.className = 'section-divider';
+  divider.textContent = label;
+  messagesEl.appendChild(divider);
+  scrollBottom();
+}
 function showTyping() {
   var wrapper = document.createElement('div');
   wrapper.className = 'msg bot'; wrapper.id = 'typingIndicator';
@@ -246,9 +260,7 @@ function showTyping() {
   wrapper.appendChild(avatar); wrapper.appendChild(bubble);
   messagesEl.appendChild(wrapper); scrollBottom();
 }
-
 function hideTyping() { var t = document.getElementById('typingIndicator'); if (t) t.remove(); }
-
 function botSay(text, delay, isHTML) {
   delay = delay || 600; isHTML = isHTML || false;
   return new Promise(function(resolve) {
@@ -260,9 +272,7 @@ function botSay(text, delay, isHTML) {
     }, delay);
   });
 }
-
 function clearInput() { inputAreaEl.innerHTML = ''; }
-
 function renderQuickReplies(options, onSelect) {
   clearInput();
   var container = document.createElement('div');
@@ -281,7 +291,6 @@ function renderQuickReplies(options, onSelect) {
   });
   inputAreaEl.appendChild(container);
 }
-
 function renderTextInput(placeholder, onSubmit, inputType) {
   inputType = inputType || 'text';
   clearInput();
@@ -307,7 +316,6 @@ function renderTextInput(placeholder, onSubmit, inputType) {
   inputAreaEl.appendChild(row);
   setTimeout(function(){ input.focus(); }, 100);
 }
-
 function renderPhoneInput(onSubmit) {
   clearInput();
   var row = document.createElement('div');
@@ -315,7 +323,7 @@ function renderPhoneInput(onSubmit) {
   var select = document.createElement('select');
   select.className = 'cw-country-select';
   var codes = [
-    ['+1','US/CA'],['  +52','MX'],['+44','UK'],['+34','ES'],['+49','DE'],['+33','FR'],
+    ['+1','US/CA'],['+52','MX'],['+44','UK'],['+34','ES'],['+49','DE'],['+33','FR'],
     ['+39','IT'],['+55','BR'],['+54','AR'],['+57','CO'],['+56','CL'],['+51','PE'],
     ['+593','EC'],['+502','GT'],['+506','CR'],['+61','AU'],['+81','JP'],['+82','KR'],
     ['+86','CN'],['+91','IN'],['+971','AE'],['+966','SA'],['+972','IL'],['+7','RU'],
@@ -346,54 +354,63 @@ function renderPhoneInput(onSubmit) {
   inputAreaEl.appendChild(row);
   setTimeout(function(){ input.focus(); }, 100);
 }
-
 function calcScore() {
   var s = 0;
   var cond = lead.condition.toLowerCase();
-  if (['als','parkinson','ms','multiple sclerosis','stroke','spinal cord'].some(function(k){ return cond.indexOf(k) > -1; })) s += 40;
-  else if (['arthritis','chronic pain','sports injury','back pain'].some(function(k){ return cond.indexOf(k) > -1; })) s += 25;
+  if (['auto immune','autoimmune','chronic degenerative','als','parkinson','ms','multiple sclerosis','stroke','spinal cord'].some(function(k){ return cond.indexOf(k) > -1; })) s += 40;
+  else if (['sport injury','pain management','arthritis','chronic pain','back pain'].some(function(k){ return cond.indexOf(k) > -1; })) s += 25;
   else s += 15;
   if (lead.travel === 'Yes, I can travel') s += 20;
   else if (lead.travel === 'Maybe, need more info') s += 10;
-  var b = lead.budget.toLowerCase();
-  if (b.indexOf('15,000') > -1 || b.indexOf('20,000') > -1 || b.indexOf('+') > -1) s += 30;
-  else if (b.indexOf('10,000') > -1) s += 20;
-  else if (b.indexOf('5,000') > -1) s += 10;
   var t = lead.timeline.toLowerCase();
   if (t.indexOf('asap') > -1 || t.indexOf('1') === 0) s += 10;
   else if (t.indexOf('3') === 0) s += 5;
+  if (lead.stemCellHistory && lead.stemCellHistory.toLowerCase().indexOf('yes') > -1) s += 5;
   return s;
 }
-
 function scoreLabel(s) {
-  if (s >= 70) return { label: 'Hot', cls: 'score-hot', status: 'HOT', emoji: 'Fire' };
-  if (s >= 40) return { label: 'Warm', cls: 'score-warm', status: 'WARM', emoji: 'Warm' };
-  return { label: 'Cool', cls: 'score-cool', status: 'COOL', emoji: 'Cool' };
+  if (s >= 70) return { label: 'Hot', cls: 'score-hot', status: 'HOT' };
+  if (s >= 40) return { label: 'Warm', cls: 'score-warm', status: 'WARM' };
+  return { label: 'Cool', cls: 'score-cool', status: 'COOL' };
 }
-
-function buildSummaryHTML(score, cls) {
+function buildSummaryHTML() {
   var html = '<div class="summary-card">';
   html += '<h3>Your Profile</h3>';
   html += '<div class="summary-row"><span class="label">Name</span><span class="value">' + lead.firstName + ' ' + lead.lastName + '</span></div>';
   html += '<div class="summary-row"><span class="label">Phone</span><span class="value">' + lead.phone + '</span></div>';
   html += '<div class="summary-row"><span class="label">Email</span><span class="value">' + lead.email + '</span></div>';
-  html += '<div class="summary-row"><span class="label">Segment</span><span class="value">' + lead.segment + '</span></div>';
-  html += '<div class="summary-row"><span class="label">Condition</span><span class="value">' + lead.condition + '</span></div>';
+  html += '<div class="summary-row"><span class="label">Condition / Goal</span><span class="value">' + lead.condition + '</span></div>';
+  html += '<div class="summary-row"><span class="label">Prior Stem Cell</span><span class="value">' + lead.stemCellHistory + '</span></div>';
   html += '<div class="summary-row"><span class="label">Can Travel</span><span class="value">' + lead.travel + '</span></div>';
-  html += '<div class="summary-row"><span class="label">Budget</span><span class="value">' + lead.budget + '</span></div>';
   html += '<div class="summary-row"><span class="label">Timeline</span><span class="value">' + lead.timeline + '</span></div>';
-  
   html += '</div>';
   return html;
 }
-
+function showRestartButton() {
+  clearInput();
+  var restartBtn = document.createElement('button');
+  restartBtn.className = 'qr-btn';
+  restartBtn.textContent = 'Start Over';
+  restartBtn.style.margin = '8px auto 0';
+  restartBtn.addEventListener('click', function() {
+    Object.keys(lead).forEach(function(k){ lead[k] = typeof lead[k] === 'number' ? 0 : ''; });
+    hsContactId = null;
+    messagesEl.innerHTML = '';
+    clearInput();
+    goToStep('welcome');
+  });
+  var btnWrap = document.createElement('div');
+  btnWrap.className = 'cw-quick-replies';
+  btnWrap.style.justifyContent = 'center';
+  btnWrap.appendChild(restartBtn);
+  inputAreaEl.appendChild(btnWrap);
+}
 function goToStep(step) {
   setProgress(step);
   if (step === 'welcome') {
-    botSay('Welcome to <strong>Cellular Institute</strong>! I am your AI Coordinator for regenerative medicine in Cancun.', 800, true).then(function() {
-      return botSay('I will help match you with the right stem cell or regenerative therapy and connect you with our medical team.', 700);
-    }).then(function() {
-      return botSay('Ready to get started?', 400);
+    addSectionDivider('Section 1 · Welcome');
+    botSay('Welcome to <strong>Cellular Institute</strong>! My goal is to prequalify a tailored regenerative health experience for you. I will gather some basic information so our team can contact you.', 900, true).then(function() {
+      return botSay('Ready to get started?', 500);
     }).then(function() {
       renderQuickReplies(['Yes, go ahead', 'Tell me more first'], function(val) {
         if (val === 'Tell me more first') {
@@ -406,8 +423,8 @@ function goToStep(step) {
       });
     });
   }
-
   else if (step === 'first_name') {
+    addSectionDivider('Section 2 · Your Contact Info');
     botSay("Great! Let's start with a few quick details so we can personalize your experience.", 600).then(function() {
       return botSay('What is your <strong>first name</strong>?', 400, true);
     }).then(function() {
@@ -417,7 +434,6 @@ function goToStep(step) {
       });
     });
   }
-
   else if (step === 'last_name') {
     botSay('Nice to meet you, ' + lead.firstName + '! What is your <strong>last name</strong>?', 500, true).then(function() {
       renderTextInput('Your last name', function(val) {
@@ -426,7 +442,6 @@ function goToStep(step) {
       });
     });
   }
-
   else if (step === 'phone') {
     botSay('What is the best phone number to reach you? Select your country code first.', 600).then(function() {
       renderPhoneInput(function(val) {
@@ -435,7 +450,6 @@ function goToStep(step) {
       });
     });
   }
-
   else if (step === 'email') {
     botSay('And your <strong>email address</strong>?', 500, true).then(function() {
       renderTextInput('your@email.com', function(val) {
@@ -447,82 +461,95 @@ function goToStep(step) {
           email: lead.email,
           hs_lead_status: 'IN_PROGRESS'
         });
-        goToStep('segment');
+        goToStep('condition');
       }, 'email');
     });
   }
-
-  else if (step === 'segment') {
-    botSay('Perfect, ' + lead.firstName + '! Which best describes you?', 600).then(function() {
-      renderQuickReplies([
-        { label: 'Patient',    value: 'Patient' },
-        { label: 'Caregiver', value: 'Caregiver' },
-        { label: 'Athlete',   value: 'Athlete' },
-        { label: 'Wellness',  value: 'Wellness' },
-        { label: 'Physician', value: 'Physician' }
-      ], function(val) {
-        lead.segment = val;
-        hsSave({ ci_segment: val });
-        if (val === 'Wellness') {
-          botSay('Our wellness programs focus on anti-aging, energy optimization, and full-body rejuvenation. Let me ask a couple more questions.', 700).then(function(){ goToStep('condition'); });
-        } else if (val === 'Physician') {
-          botSay('Thank you, Doctor! We have dedicated physician collaboration programs. Let me gather a few more details.', 700).then(function(){ goToStep('condition'); });
-        } else {
-          goToStep('condition');
-        }
-      });
-    });
-  }
-
   else if (step === 'condition') {
-    var condQ = 'What condition or health goal are you looking to address?';
-    if (lead.segment === 'Athlete') condQ = 'What injury or performance goal brings you to us?';
-    if (lead.segment === 'Wellness') condQ = 'What wellness goal are you focusing on?';
-    if (lead.segment === 'Physician') condQ = 'What condition does your patient have?';
-    botSay(condQ, 600).then(function() {
+    addSectionDivider('Section 3 · Your Health Goal');
+    botSay('Thanks, ' + lead.firstName + '! What condition or health goal are you looking to address?', 600).then(function() {
       renderQuickReplies([
-        'ALS', "Parkinson's Disease", 'Multiple Sclerosis',
-        'Arthritis / Joint Pain', 'Sports Injury / Recovery',
-        'Stroke Rehabilitation', 'Spinal Cord / Back Pain',
-        'Chronic Pain', 'Anti-Aging / Wellness', 'Other'
+        'Anti-Aging / Wellness',
+        'Sport Injury / Pain Management',
+        'Anti-Aging / Longevity',
+        'Auto Immune Conditions',
+        'Chronic Degenerative Condition',
+        'Other'
       ], function(val) {
         if (val === 'Other') {
           botSay('Please tell us more about the condition or health goal:', 400).then(function() {
             renderTextInput('Describe your condition', function(otherVal) {
               lead.condition = otherVal;
               hsSave({ ci_condition: otherVal });
-              goToStep('travel');
+              goToStep('stem_cell_history');
             });
           });
         } else {
           lead.condition = val;
           hsSave({ ci_condition: val });
-          goToStep('travel');
+          goToStep('stem_cell_history');
         }
       });
     });
   }
-
+  else if (step === 'stem_cell_history') {
+    botSay('Have you had <strong>stem cell therapy</strong> or any regenerative treatments in the past?', 600, true).then(function() {
+      renderQuickReplies([
+        'Yes, stem cell therapy',
+        'Yes, other regenerative treatments',
+        'No, this would be my first time',
+        'Not sure'
+      ], function(val) {
+        lead.stemCellHistory = val;
+        hsSave({ ci_stem_cell_history: val });
+        goToStep('pricing_ack');
+      });
+    });
+  }
+  else if (step === 'pricing_ack') {
+    addSectionDivider('Section 4 · Investment & Commitment');
+    botSay('Our regenerative treatment programs <strong>start at $5,000</strong>.', 700, true).then(function() {
+      return botSay('Do you understand this is an <strong>out-of-pocket procedure</strong> that is not covered by insurance?', 700, true);
+    }).then(function() {
+      renderQuickReplies([
+        { label: 'Proceed',         value: 'Proceed' },
+        { label: 'Do Not Proceed',  value: 'Do Not Proceed' },
+        { label: 'Not Ready Yet',   value: 'Not Ready Yet' }
+      ], function(val) {
+        lead.pricingAck = val;
+        hsSave({ ci_pricing_acknowledgment: val });
+        if (val === 'Proceed') {
+          botSay('Wonderful! Let me ask a few final questions so we can build the right plan for you.', 700).then(function(){
+            goToStep('travel');
+          });
+        } else if (val === 'Not Ready Yet') {
+          hsSave({ ci_lead_status: 'NURTURE', hs_lead_status: 'OPEN' });
+          botSay('No problem, ' + lead.firstName + '. We completely understand. We will save your information and send you educational resources so you can learn at your own pace.', 800).then(function() {
+            return botSay('When you are ready, our coordinators will be here to guide you. Thank you for your interest in <strong>Cellular Institute</strong>!', 700, true);
+          }).then(function() {
+            showRestartButton();
+          });
+        } else {
+          hsSave({ ci_lead_status: 'DISQUALIFIED', hs_lead_status: 'UNQUALIFIED' });
+          botSay('Thank you for your time, ' + lead.firstName + '. We wish you the very best on your health journey.', 800).then(function() {
+            return botSay('If anything changes in the future, we are always here to help.', 600);
+          }).then(function() {
+            showRestartButton();
+          });
+        }
+      });
+    });
+  }
   else if (step === 'travel') {
+    addSectionDivider('Section 5 · Logistics');
     botSay('Our treatments are performed at our clinic in <strong>Cancun, Mexico</strong>. Are you able to travel?', 600, true).then(function() {
       renderQuickReplies(['Yes, I can travel', 'Maybe, need more info', 'No, looking for local options'], function(val) {
         lead.travel = val;
         hsSave({ ci_can_travel: val });
-        goToStep('budget');
-      });
-    });
-  }
-
-  else if (step === 'budget') {
-    botSay('To help match you with the right program, what is your approximate <strong>out-of-pocket budget</strong>?', 600, true).then(function() {
-      renderQuickReplies(['Under $5,000', '$5,000 to $10,000', '$10,000 to $15,000', '$15,000 to $20,000', '$20,000+', 'Not sure yet'], function(val) {
-        lead.budget = val;
-        hsSave({ ci_budget: val });
         goToStep('timeline');
       });
     });
   }
-
   else if (step === 'timeline') {
     botSay('When are you hoping to begin treatment?', 500).then(function() {
       renderQuickReplies(['ASAP', '1 to 3 months', '3 to 6 months', '6+ months', 'Just researching'], function(val) {
@@ -532,8 +559,8 @@ function goToStep(step) {
       });
     });
   }
-
   else if (step === 'summary') {
+    addSectionDivider('Section 6 · Welcome to the Family');
     var score = calcScore();
     lead.score = score;
     var sl = scoreLabel(score);
@@ -543,44 +570,27 @@ function goToStep(step) {
       ci_lead_status: sl.status,
       hs_lead_status: sl.status === 'HOT' ? 'CONNECTED' : (sl.status === 'WARM' ? 'OPEN' : 'NEW'),
       ci_timeline: lead.timeline,
-      ci_budget: lead.budget,
       ci_can_travel: lead.travel,
-      ci_segment: lead.segment,
-      ci_condition: lead.condition
+      ci_condition: lead.condition,
+      ci_stem_cell_history: lead.stemCellHistory,
+      ci_pricing_acknowledgment: lead.pricingAck
     });
     botSay('Thank you, ' + lead.firstName + '! Here is a summary of your profile:', 700).then(function() {
-      addMsg(buildSummaryHTML(score, sl.cls), 'bot', true);
-      return botSay('Your information has been saved. A member of our team will reach out to you shortly, usually within 24 hours.', 800);
+      addMsg(buildSummaryHTML(), 'bot', true);
+      return botSay("We're going to <strong>study and design a personalized treatment plan</strong> for you. A member of our team will reach out to you shortly, usually within 24 hours. Welcome to the <strong>Cellular Institute family</strong>! &#127881;", 1000, true);
     }).then(function() {
       if (sl.status === 'HOT') {
-        return botSay('Based on your profile, you are a <strong>priority candidate</strong> for our regenerative programs. We will have a coordinator contact you very soon!', 700, true);
+        return botSay('Based on your profile, you are a <strong>priority candidate</strong> for our regenerative programs. Expect a call very soon!', 700, true);
       } else if (sl.status === 'WARM') {
-        return botSay('Great potential for treatment! Our team will review your profile and send you relevant program options.', 700);
+        return botSay('Our team will review your profile and send you relevant program options.', 700);
       } else {
-        return botSay('We appreciate your interest! Our team will send you educational resources and program information to help with your research.', 700);
+        return botSay('Our team will send you educational resources and program information to support your research.', 700);
       }
     }).then(function() {
-      clearInput();
-      var restartBtn = document.createElement('button');
-      restartBtn.className = 'qr-btn';
-      restartBtn.textContent = 'Start Over';
-      restartBtn.style.margin = '8px auto 0';
-      restartBtn.addEventListener('click', function() {
-        Object.keys(lead).forEach(function(k){ lead[k] = typeof lead[k] === 'number' ? 0 : ''; });
-        hsContactId = null;
-        messagesEl.innerHTML = '';
-        clearInput();
-        goToStep('welcome');
-      });
-      var btnWrap = document.createElement('div');
-      btnWrap.className = 'cw-quick-replies';
-      btnWrap.style.justifyContent = 'center';
-      btnWrap.appendChild(restartBtn);
-      inputAreaEl.appendChild(btnWrap);
+      showRestartButton();
     });
   }
 }
-
 goToStep('welcome');
 </script>
 </body>
