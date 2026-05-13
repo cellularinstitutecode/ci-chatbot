@@ -3,596 +3,136 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cellular Institute AI Coordinator v4</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <title>Cellular Institute AI Coordinator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --ci-navy: #6B3A1F;
-      --ci-teal: #8A4A26;
-      --ci-gold: #C9A84C;
-      --ci-light: #F7F2EA;
-      --ci-white: #FFFFFF;
-      --ci-gray: #6B7280;
-      --ci-border: #E5E7EB;
-      --ci-success: #10B981;
-      --ci-error: #EF4444;
-      --radius: 12px;
-      --shadow: 0 4px 24px rgba(10,25,49,0.10);
-    }
-    html, body { height: 100%; font-family: 'Inter', sans-serif; background: transparent; }
-    body { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
-    #chat-widget {
-      width: 420px; max-width: 100vw;
-      background: var(--ci-white);
-      border-radius: 20px;
-      box-shadow: var(--shadow);
-      display: flex; flex-direction: column;
-      overflow: hidden;
-      max-height: 92vh;
-    }
-    .cw-header {
-      background: var(--ci-navy);
-      padding: 18px 20px 16px;
-      display: flex; align-items: center; gap: 12px;
-    }
-    .cw-avatar {
-      width: 42px; height: 42px; border-radius: 50%;
-      background: #C9A84C; overflow: hidden;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 20px; flex-shrink: 0;
-    }
-    .cw-header-text h2 { color: var(--ci-white); font-size: 15px; font-weight: 600; }
-    .cw-header-text p { color: rgba(255,255,255,0.6); font-size: 12px; margin-top: 2px; }
-    .cw-status { margin-left: auto; display: flex; align-items: center; gap: 6px; color: var(--ci-success); font-size: 12px; font-weight: 500; }
-    .cw-status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ci-success); }
-    .cw-messages {
-      flex: 1; overflow-y: auto; padding: 20px 16px;
-      display: flex; flex-direction: column; gap: 16px;
-      scroll-behavior: smooth;
-    }
-    .cw-messages::-webkit-scrollbar { width: 4px; }
-    .cw-messages::-webkit-scrollbar-thumb { background: var(--ci-border); border-radius: 4px; }
-    .msg { display: flex; gap: 10px; animation: fadeUp .3s ease; }
-    .msg.user { flex-direction: row-reverse; }
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-    .msg-avatar { width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 14px; }
-    .bot .msg-avatar { background: #fff; overflow: hidden; padding: 0; border: 1px solid var(--ci-border); }
-    .bot .msg-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block; }
-    .user .msg-avatar { background: var(--ci-teal); }
-    .msg-bubble {
-      max-width: 78%; padding: 11px 15px;
-      border-radius: 16px; font-size: 14px; line-height: 1.55;
-    }
-    .bot .msg-bubble { background: var(--ci-light); color: #1F2937; border-bottom-left-radius: 4px; }
-    .user .msg-bubble { background: var(--ci-teal); color: var(--ci-white); border-bottom-right-radius: 4px; }
-    .msg-bubble strong { font-weight: 600; }
-    .section-divider {
-      display: flex; align-items: center; gap: 10px;
-      padding: 6px 4px; margin: 4px 0;
-      font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
-      color: var(--ci-gold); text-transform: uppercase;
-    }
-    .section-divider::before, .section-divider::after {
-      content: ''; flex: 1; height: 1px; background: var(--ci-border);
-    }
-    .typing-dots span { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--ci-gray); margin: 0 2px; animation: bounce 1.2s infinite; }
-    .typing-dots span:nth-child(2) { animation-delay: .2s; }
-    .typing-dots span:nth-child(3) { animation-delay: .4s; }
-    @keyframes bounce { 0%,60%,100% { transform: translateY(0); } 30% { transform: translateY(-6px); } }
-    .cw-input-area { padding: 14px 16px 18px; border-top: 1px solid var(--ci-border); background: var(--ci-white); }
-    .cw-quick-replies { display: flex; flex-wrap: wrap; gap: 8px; padding: 4px 0 8px; }
-    .qr-btn {
-      padding: 8px 16px; border: 2px solid var(--ci-teal);
-      background: transparent; color: var(--ci-teal);
-      border-radius: 24px; font-size: 13px; font-weight: 500;
-      cursor: pointer; transition: all .2s;
-    }
-    .qr-btn:hover { background: var(--ci-teal); color: var(--ci-white); }
-    .qr-btn.selected { background: var(--ci-teal); color: var(--ci-white); }
-    .cw-text-input-row { display: flex; gap: 8px; }
-    .cw-text-input {
-      flex: 1; padding: 10px 14px;
-      border: 1.5px solid var(--ci-border);
-      border-radius: 10px; font-size: 14px;
-      font-family: 'Inter', sans-serif;
-      transition: border-color .2s;
-      outline: none;
-    }
-    .cw-text-input:focus { border-color: var(--ci-teal); }
-    .cw-send-btn {
-      width: 40px; height: 40px;
-      background: var(--ci-teal); border: none;
-      border-radius: 10px; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      transition: background .2s; flex-shrink: 0;
-    }
-    .cw-send-btn:hover { background: #6B3A1F; }
-    .cw-send-btn svg { fill: white; }
-    .cw-phone-row { display: flex; gap: 6px; }
-    .cw-country-select {
-      padding: 10px 8px;
-      border: 1.5px solid var(--ci-border);
-      border-radius: 10px; font-size: 13px;
-      font-family: 'Inter', sans-serif;
-      background: var(--ci-white);
-      cursor: pointer; outline: none;
-      transition: border-color .2s;
-      flex-shrink: 0; max-width: 110px;
-    }
-    .cw-country-select:focus { border-color: var(--ci-teal); }
-    .summary-card {
-      background: linear-gradient(135deg, #0A1931 0%, #1a3355 100%);
-      border-radius: 14px; padding: 18px;
-      color: #FFFFFF; margin-top: 4px;
-    }
-    .summary-card h3 { font-size: 14px; font-weight: 600; margin-bottom: 12px; color: #C9A84C; }
-    .summary-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 13px; }
-    .summary-row:last-child { border-bottom: none; }
-    .summary-row .label { color: rgba(255,255,255,0.6); }
-    .summary-row .value { font-weight: 500; text-align: right; max-width: 55%; }
-    .score-badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-top: 8px; }
-    .score-hot { background: #EF4444; }
-    .score-warm { background: #F59E0B; }
-    .score-cool { background: #00B4D8; }
-    .cw-progress { padding: 6px 16px 8px; }
-    .progress-bar { height: 3px; background: var(--ci-border); border-radius: 3px; overflow: hidden; }
-    .progress-fill { height: 100%; background: var(--ci-teal); border-radius: 3px; transition: width .5s ease; }
-    .cw-footer { text-align: center; font-size: 11px; color: var(--ci-gray); padding: 8px 0 12px; }
-    .cw-footer a { color: var(--ci-teal); text-decoration: none; }
+    ,::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--ci-navy:#6B3A1F;--ci-teal:#8A4A26;--ci-gold:#C9A84C;--ci-light:#F7F2EA;--ci-border:#E5E7EB;--ci-success:#10B981;--ci-gray:#6B7280}
+    html,body{height:100%;font-family:'Inter',sans-serif;background:transparent}
+    body{display:flex;align-items:center;justify-content:center;min-height:100vh}
+    #cw{width:430px;max-width:100vw;background:#fff;border-radius:20px;box-shadow:0 4px 24px rgba(10,25,49,.10);display:flex;flex-direction:column;height:90vh;max-height:720px;overflow:hidden}
+    .cw-header{background:var(--ci-navy);padding:14px 18px;display:flex;align-items:center;gap:12px;flex-shrink:0}
+    .cw-avatar{width:38px;height:38px;border-radius:50%;overflow:hidden;flex-shrink:0;background:#C9A84C;display:flex;align-items:center;justify-content:center}
+    .cw-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
+    .cw-header-text h2{color:#fff;font-size:14px;font-weight:600}
+    .cw-header-text p{color:rgba(255,255,255,.6);font-size:11px;margin-top:2px}
+    .cw-status{margin-left:auto;display:flex;align-items:center;gap:5px;color:var(--ci-success);font-size:11px;font-weight:500;white-space:nowrap}
+    .cw-status-dot{width:7px;height:7px;border-radius:50%;background:var(--ci-success);flex-shrink:0}
+    .cw-prog{padding:5px 16px;flex-shrink:0}
+    .prog-bar{height:3px;background:var(--ci-border);border-radius:3px;overflow:hidden}
+    .prog-fill{height:100%;background:var(--ci-teal);border-radius:3px;transition:width .5s ease;width:0%}
+    .cw-msgs{flex:1;overflow-y:auto;padding:16px 14px;display:flex;flex-direction:column;gap:12px;min-height:0}
+    .cw-msgs::-webkit-scrollbar{width:3px}
+    .cw-msgs::-webkit-scrollbar-thumb{background:var(--ci-border);border-radius:3px}
+    .msg{display:flex;gap:8px;animation:fu .3s ease}
+    .msg.user{flex-direction:row-reverse}
+    @keyframes fu{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+    .msg-av{width:28px;height:28px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;overflow:hidden;border:1px solid var(--ci-border);background:#fff}
+    .msg.user .msg-av{background:var(--ci-teal);border-color:var(--ci-teal);color:#fff}
+    .msg-av img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
+    .msg-bub{max-width:80%;padding:9px 13px;border-radius:14px;font-size:13px;line-height:1.55}
+    .msg.bot .msg-bub{background:var(--ci-light);color:#1F2937;border-bottom-left-radius:3px}
+    .msg.user .msg-bub{background:var(--ci-teal);color:#fff;border-bottom-right-radius:3px}
+    .msg-bub strong{font-weight:600}
+    .sec-div{display:flex;align-items:center;gap:8px;padding:3px 0;font-size:10px;font-weight:600;letter-spacing:.08em;color:var(--ci-gold);text-transform:uppercase;flex-shrink:0}
+    .sec-div::before,.sec-div::after{content:'';flex:1;height:1px;background:var(--ci-border)}
+    .dots span{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--ci-gray);margin:0 2px;animation:bo 1.2s infinite}
+    .dots span:nth-child(2){animation-delay:.2s}
+    .dots span:nth-child(3){animation-delay:.4s}
+    @keyframes bo{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+    .cw-inp{padding:10px 14px 14px;border-top:1px solid var(--ci-border);background:#fff;flex-shrink:0}
+    .qr-wrap{display:flex;flex-wrap:wrap;gap:7px;padding:2px 0 4px}
+    .qr{padding:7px 14px;border:1.5px solid var(--ci-teal);background:transparent;color:var(--ci-teal);border-radius:24px;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s;font-family:inherit}
+    .qr:hover,.qr.sel{background:var(--ci-teal);color:#fff}
+    .inp-row{display:flex;gap:8px}
+    .txt-inp{flex:1;padding:9px 12px;border:1.5px solid var(--ci-border);border-radius:10px;font-size:13px;font-family:inherit;outline:none;transition:border-color .2s;min-width:0}
+    .txt-inp:focus{border-color:var(--ci-teal)}
+    .send-btn{width:38px;height:38px;background:var(--ci-teal);border:none;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .2s}
+    .send-btn:hover{background:#6B3A1F}
+    .send-btn svg{fill:#fff}
+    .cc-sel{padding:9px 6px;border:1.5px solid var(--ci-border);border-radius:10px;font-size:12px;font-family:inherit;background:#fff;cursor:pointer;outline:none;transition:border-color .2s;flex-shrink:0;width:100px}
+    .cc-sel:focus{border-color:var(--ci-teal)}
+    .sum-card{background:linear-gradient(135deg,#0A1931,#1a3355);border-radius:12px;padding:14px;color:#fff;margin-top:2px}
+    .sum-card h3{font-size:12px;font-weight:600;margin-bottom:8px;color:#C9A84C}
+    .sum-row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.1);font-size:11.5px}
+    .sum-row:last-child{border-bottom:none}
+    .sum-row .lbl{color:rgba(255,255,255,.6);flex-shrink:0;margin-right:8px}
+    .sum-row .val{font-weight:500;text-align:right;word-break:break-word}
+    .cw-foot{text-align:center;font-size:10px;color:var(--ci-gray);padding:5px 0 8px;flex-shrink:0}
+    .cw-foot a{color:var(--ci-teal);text-decoration:none}
   </style>
 </head>
 <body>
-<div id="chat-widget">
+<div id="cw">
   <div class="cw-header">
-    <div class="cw-avatar"><img src="https://www.cellularhopeinstitute.com/wp-content/uploads/2026/05/ci-logo.jpg" alt="Cellular Institute" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;"></div>
-    <div class="cw-header-text">
-      <h2>Cellular Institute AI</h2>
-      <p>Regenerative Medicine Coordinator</p>
-    </div>
-    <div class="cw-status">
-      <div class="cw-status-dot"></div>
-      Online
-    </div>
+    <div class="cw-avatar"><img id="hdrLogo" src="" alt="CI"></div>
+    <div class="cw-header-text"><h2>Cellular Institute AI</h2><p>Regenerative Medicine Coordinator</p></div>
+    <div class="cw-status"><div class="cw-status-dot"></div>Online</div>
   </div>
-  <div class="cw-progress">
-    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
-  </div>
-  <div class="cw-messages" id="chatMessages"></div>
-  <div class="cw-input-area" id="inputArea"></div>
-  <div class="cw-footer">Powered by <a href="https://cellularinstitute.com" target="_blank">Cellular Institute</a></div>
+  <div class="cw-prog"><div class="prog-bar"><div class="prog-fill" id="pf"></div></div></div>
+  <div class="cw-msgs" id="msgs"></div>
+  <div class="cw-inp" id="inp"></div>
+  <div class="cw-foot">Powered by <a href="https://cellularinstitute.com" target="_blank">Cellular Institute</a></div>
 </div>
 <script>
-// HubSpot calls go through Vercel proxy — token never exposed in frontend code
-var PROXY_URL = 'https://ci-hubspot-proxy.vercel.app/api/hubspot';
-var hsContactId = null;
-// Serialized HubSpot writes: one in-flight request at a time, so a CREATE
-// completes (and we know the contactId) before any subsequent PATCH/CREATE fires.
-var hsQueue = Promise.resolve();
-function hsSave(props) {
-  if (!props || Object.keys(props).length === 0) return hsQueue;
-  hsQueue = hsQueue.then(function() {
-    if (!hsContactId) {
-      return fetch(PROXY_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'create', properties: props })
-      }).then(function(r) { console.log('[CI] create status:', r.status); return r.json(); }).then(function(d) {
-        if (d && d.id) {
-          hsContactId = d.id;
-          console.log('[CI] Contact created:', hsContactId);
-        } else if (d && d.existingId) {
-          hsContactId = d.existingId;
-          return hsPatchNow(props);
-        } else {
-          console.warn('[CI] Create error:', d);
-        }
-      }).catch(function(e) { console.warn('[CI] error:', e); });
-    } else {
-      return hsPatchNow(props);
-    }
-  });
-  return hsQueue;
+var LOGO='https://www.cellularhopeinstitute.com/wp-content/uploads/2026/05/ci-logo.jpg';
+
+// Set header logo
+document.getElementById('hdrLogo').src = LOGO;
+var PROXY='https://ci-hubspot-proxy.vercel.app/api/hubspot';
+var hsId=null,hsQ=Promise.resolve();
+function hsSave(p){if(!p||!Object.keys(p).length)return;hsQ=hsQ.then(function(){if(!hsId)return fetch(PROXY,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'create',properties:p})}).then(function(r){return r.json();}).then(function(d){if(d&&d.id)hsId=d.id;else if(d&&d.existingId){hsId=d.existingId;hsPatch(p);}}).catch(function(){});else return hsPatch(p);});}
+function hsPatch(p){if(!hsId)return;return fetch(PROXY,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'update',contactId:hsId,properties:p})}).catch(function(){});}
+var lead={firstName:'',lastName:'',email:'',phone:'',country:'',preferredContact:'',bestTime:'',conditionCategory:'',conditionDetail:'',canTravel:'',pricingAck:'',timeline:'',readiness:'',regenHistory:'',regenWhere:'',regenWhen:'',medicalRecords:''};
+var PM={welcome:0,condition:8,condition_detail:16,first_name:22,last_name:27,email:32,phone:37,country:42,preferred_contact:48,best_time:54,location:62,pricing:70,timeline:76,readiness:82,regen_history:88,regen_where:91,regen_when:94,medical_records:97,summary:100};
+var M=document.getElementById('msgs'),I=document.getElementById('inp'),PF=document.getElementById('pf');
+function setP(s){PF.style.width=(PM[s]||0)+'%';}
+function scroll(){M.scrollTop=M.scrollHeight;}
+function botAv(){var a=document.createElement('div');a.className='msg-av';var im=document.createElement('img');im.src=LOGO;im.alt='CI';a.appendChild(im);return a;}
+function addMsg(txt,role,html){
+  var w=document.createElement('div');w.className='msg '+(role||'bot');
+  var a;
+  if(role==='user'){a=document.createElement('div');a.className='msg-av';a.textContent='👤';}
+  else{a=botAv();}
+  var b=document.createElement('div');b.className='msg-bub';
+  if(html)b.innerHTML=txt;else b.textContent=txt;
+  w.appendChild(a);w.appendChild(b);M.appendChild(w);scroll();
 }
-function hsPatchNow(props) {
-  if (!hsContactId) return;
-  return fetch(PROXY_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ action: 'update', contactId: hsContactId, properties: props })
-  }).then(function(r) {
-    if (r.ok) console.log('[CI] Contact updated:', hsContactId);
-    else r.json().then(function(d){ console.warn('[CI] patch error:', d); });
-  }).catch(function(e){ console.warn('[CI] patch error:', e); });
+function addDiv(t){var d=document.createElement('div');d.className='sec-div';d.textContent=t;M.appendChild(d);scroll();}
+function typing(){var w=document.createElement('div');w.className='msg bot';w.id='typ';w.appendChild(botAv());var b=document.createElement('div');b.className='msg-bub dots';b.innerHTML='<span></span><span></span><span></span>';w.appendChild(b);M.appendChild(w);scroll();}
+function noTyping(){var t=document.getElementById('typ');if(t)t.remove();}
+function say(txt,ms,html){return new Promise(function(r){typing();setTimeout(function(){noTyping();addMsg(txt,'bot',html||false);r();},ms||600);});}
+function clearI(){I.innerHTML='';}
+function qr(opts,cb){clearI();var w=document.createElement('div');w.className='qr-wrap';opts.forEach(function(o){var b=document.createElement('button');b.className='qr';b.textContent=o.label||o;b.onclick=function(){w.querySelectorAll('.qr').forEach(function(x){x.disabled=true;});b.classList.add('sel');addMsg(o.label||o,'user');cb(o.value!==undefined?o.value:(o.label||o));};w.appendChild(b);});I.appendChild(w);}
+function textInp(ph,cb,type){clearI();var row=document.createElement('div');row.className='inp-row';var i=document.createElement('input');i.type=type||'text';i.className='txt-inp';i.placeholder=ph;var btn=document.createElement('button');btn.className='send-btn';btn.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24"><path d="M2 21l21-9-21-9v7l15 2-15 2z"/></svg>';var go=function(){var v=i.value.trim();if(!v)return;i.disabled=true;btn.disabled=true;addMsg(v,'user');cb(v);};btn.onclick=go;i.onkeydown=function(e){if(e.key==='Enter')go();};row.appendChild(i);row.appendChild(btn);I.appendChild(row);setTimeout(function(){i.focus();},80);}
+function phoneInp(cb){clearI();var row=document.createElement('div');row.className='inp-row';var sel=document.createElement('select');sel.className='cc-sel';[['+1','US/CA'],['+52','MX'],['+44','UK'],['+34','ES'],['+49','DE'],['+33','FR'],['+39','IT'],['+55','BR'],['+54','AR'],['+57','CO'],['+56','CL'],['+51','PE'],['+593','EC'],['+502','GT'],['+506','CR'],['+61','AU'],['+81','JP'],['+82','KR'],['+86','CN'],['+91','IN'],['+971','AE'],['+966','SA'],['+7','RU'],['+27','ZA'],['+234','NG'],['+20','EG'],['+212','MA']].forEach(function(c){var o=document.createElement('option');o.value=c[0];o.textContent=c[0]+' '+c[1];sel.appendChild(o);});var i=document.createElement('input');i.type='tel';i.className='txt-inp';i.placeholder='Phone / WhatsApp';var btn=document.createElement('button');btn.className='send-btn';btn.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24"><path d="M2 21l21-9-21-9v7l15 2-15 2z"/></svg>';var go=function(){var v=i.value.trim();if(!v)return;i.disabled=true;btn.disabled=true;sel.disabled=true;addMsg(sel.value+' '+v,'user');cb(sel.value+' '+v);};btn.onclick=go;i.onkeydown=function(e){if(e.key==='Enter')go();};row.appendChild(sel);row.appendChild(i);row.appendChild(btn);I.appendChild(row);setTimeout(function(){i.focus();},80);}
+function calcScore(){var s=0,c=lead.conditionCategory.toLowerCase();if(c.indexOf('autoimmune')>-1||c.indexOf('neurological')>-1)s+=40;else if(c.indexOf('sport')>-1||c.indexOf('orthopedic')>-1)s+=25;else s+=15;if(lead.canTravel==='Yes, I can travel')s+=20;else if(lead.canTravel==='I may be able to travel')s+=10;var t=lead.timeline.toLowerCase();if(t.indexOf('soon')>-1||t.indexOf('1 month')>-1)s+=10;else if(t.indexOf('1 to 3')>-1)s+=5;if(lead.readiness.toLowerCase().indexOf('very ready')>-1)s+=10;else if(lead.readiness.toLowerCase().indexOf('questions')>-1)s+=5;if(lead.regenHistory.toLowerCase().indexOf('yes')>-1)s+=5;if(lead.pricingAck==='Yes, I understand')s+=10;return s;}
+function scoreLbl(s){if(s>=70)return{status:'HOT',hs:'CONNECTED'};if(s>=40)return{status:'WARM',hs:'OPEN'};return{status:'COOL',hs:'NEW'};}
+function buildSum(){function r(l,v){return'<div class="sum-row"><span class="lbl">'+l+'</span><span class="val">'+(v||'—')+'</span></div>';}var h='<div class="sum-card"><h3>Your Profile Summary</h3>';h+=r('Name',lead.firstName+' '+lead.lastName);h+=r('Email',lead.email);h+=r('Phone',lead.phone);h+=r('Country',lead.country);h+=r('Preferred Contact',lead.preferredContact);h+=r('Best Time',lead.bestTime);h+=r('Condition / Goal',lead.conditionCategory);h+=r('Specific Area',lead.conditionDetail);h+=r('Prev. Regen. Treatment',lead.regenHistory);if(lead.regenWhere)h+=r('Where Received',lead.regenWhere);if(lead.regenWhen)h+=r('Most Recent Treatment',lead.regenWhen);h+=r('Can Travel to Cancun',lead.canTravel);h+=r('Out-of-pocket Understanding',lead.pricingAck);h+=r('Timeline',lead.timeline);h+=r('Readiness',lead.readiness);h+=r('Medical Records',lead.medicalRecords);h+='</div>';return h;}
+function endBtns(){clearI();var w=document.createElement('div');w.className='qr-wrap';[{l:'Schedule a Call',v:'s'},{l:'Send My Information',v:'i'},{l:'Start Over',v:'r'}].forEach(function(o){var b=document.createElement('button');b.className='qr';b.textContent=o.l;b.onclick=function(){w.querySelectorAll('.qr').forEach(function(x){x.disabled=true;});b.classList.add('sel');if(o.v==='r'){Object.keys(lead).forEach(function(k){lead[k]='';});hsId=null;M.innerHTML='';clearI();go('welcome');}else{addMsg(o.l,'user');say('Thank you, '+lead.firstName+'! Our patient coordination team will review your information and be in touch soon. We look forward to guiding you on your health journey. 🌿',700);}};w.appendChild(b);});I.appendChild(w);}
+function go(s){
+  setP(s);
+  if(s==='welcome'){addDiv('Section 1 · Welcome');say('Welcome to <strong>Cellular Institute.</strong>',700,true).then(function(){return say("I'll ask a few quick questions so our patient coordination team can understand your condition, your goals, and guide you toward the right next step.",900);}).then(function(){return say('This chat does not provide a diagnosis. It helps us collect the basic information needed before a coordinator contacts you.',800);}).then(function(){qr(['Yes, go ahead'],function(){go('condition');});});}
+  else if(s==='condition'){addDiv('Section 2 · Your Condition or Goal');say('What best describes what you are looking for?',600).then(function(){qr(['Orthopedics / Joint Pain','Sports Injuries / Pain Management','Autoimmune / Inflammatory Conditions','Neurological Conditions','Longevity / Anti-Aging','Other Condition'],function(v){lead.conditionCategory=v;hsSave({ci_condition_category:v});go('condition_detail');});});}
+  else if(s==='condition_detail'){say('Please briefly describe the specific condition, injury, or goal you are looking to address.',600).then(function(){textInp('E.g. knee pain, Parkinson\u2019s, longevity program\u2026',function(v){lead.conditionDetail=v;hsSave({ci_condition_detail:v});go('first_name');});});}
+  else if(s==='first_name'){addDiv('Section 3 · Your Contact Info');say("Great. Let's collect your contact information so our team can follow up.",600).then(function(){return say('What is your <strong>first name</strong>?',400,true);}).then(function(){textInp('Your first name',function(v){lead.firstName=v;go('last_name');});});}
+  else if(s==='last_name'){say('Nice to meet you, '+lead.firstName+'! What is your <strong>last name</strong>?',500,true).then(function(){textInp('Your last name',function(v){lead.lastName=v;go('email');});});}
+  else if(s==='email'){say('What is your <strong>email address</strong>?',500,true).then(function(){textInp('your@email.com',function(v){lead.email=v;go('phone');},'email');});}
+  else if(s==='phone'){say('What is your <strong>phone / WhatsApp number</strong>? Select your country code first.',600,true).then(function(){phoneInp(function(v){lead.phone=v;go('country');});});}
+  else if(s==='country'){say('Which <strong>country</strong> are you located in?',500,true).then(function(){textInp('Your country',function(v){lead.country=v;hsSave({firstname:lead.firstName,lastname:lead.lastName,email:lead.email,phone:lead.phone,country:v,ci_condition_category:lead.conditionCategory,ci_condition_detail:lead.conditionDetail,hs_lead_status:'IN_PROGRESS'});go('preferred_contact');});});}
+  else if(s==='preferred_contact'){say('How would you prefer us to contact you?',500).then(function(){qr(['WhatsApp','Phone call','Email','Text message'],function(v){lead.preferredContact=v;hsSave({ci_preferred_contact:v});go('best_time');});});}
+  else if(s==='best_time'){say('What is the best time to reach you?',500).then(function(){qr(['Morning','Afternoon','Evening','Anytime'],function(v){lead.bestTime=v;hsSave({ci_best_time:v});go('location');});});}
+  else if(s==='location'){addDiv('Section 4 · Location');say('Our clinic is located in <strong>Cancun, Mexico</strong>, and most programs require traveling here for treatment.',700,true).then(function(){return say('Would you be able to travel to Cancun if our team determines you may be a good candidate?',700);}).then(function(){qr(['Yes, I can travel','I may be able to travel','I need more information first','No, I cannot travel'],function(v){lead.canTravel=v;hsSave({ci_can_travel:v});go('pricing');});});}
+  else if(s==='pricing'){addDiv('Section 5 · Out-of-Pocket Programs');say('Cellular Institute provides personalized regenerative medicine programs that are generally <strong>paid out of pocket</strong> and are not covered by insurance.',800,true).then(function(){return say('The exact recommendation depends on your condition, goals, medical records, diagnostics, and the treatment plan designed by the team.',700);}).then(function(){return say('Is this something you are comfortable considering?',600);}).then(function(){qr(['Yes, I understand','I need more information','Not ready at this time'],function(v){lead.pricingAck=v;hsSave({ci_pricing_acknowledgment:v});if(v==='Not ready at this time'){hsSave({ci_lead_status:'NURTURE',hs_lead_status:'OPEN'});say('No problem, '+lead.firstName+'. We completely understand. We will save your information and send you educational resources so you can learn at your own pace.',800).then(function(){return say('When you are ready, our coordinators will be here to guide you. Thank you for your interest in <strong>Cellular Institute!</strong>',700,true);}).then(endBtns);}else{say('Understood! Let me ask a few more questions so we can build the right plan for you.',600).then(function(){go('timeline');});}});});}
+  else if(s==='timeline'){addDiv('Section 6 · Timeline & Readiness');say('When are you hoping to begin your treatment or consultation process?',600).then(function(){qr(['As soon as possible','Within 1 month','1 to 3 months','3 to 6 months','6+ months','Just researching'],function(v){lead.timeline=v;hsSave({ci_timeline:v});go('readiness');});});}
+  else if(s==='readiness'){say('How ready are you to speak with a patient coordinator?',500).then(function(){qr(['Very ready','I have questions first',"I'm still researching","I'm helping someone else"],function(v){lead.readiness=v;hsSave({ci_readiness:v});go('regen_history');});});}
+  else if(s==='regen_history'){addDiv('Section 7 · Previous Treatments');say('Have you received any <strong>regenerative medicine treatments</strong> before?',600,true).then(function(){qr(['Yes, stem cell therapy','Yes, exosome therapy','Yes, PRP or orthobiologics','Yes, other regenerative treatments','No, this would be my first time','Not sure'],function(v){lead.regenHistory=v;hsSave({ci_regen_history:v});go(v.toLowerCase().indexOf('yes')>-1?'regen_where':'medical_records');});});}
+  else if(s==='regen_where'){say('Where did you receive the treatment?',500).then(function(){textInp('Clinic, city, or country',function(v){lead.regenWhere=v;hsSave({ci_regen_where:v});go('regen_when');});});}
+  else if(s==='regen_when'){say('When was your most recent treatment?',500).then(function(){qr(['Less than 3 months ago','3 to 6 months ago','6 to 12 months ago','More than 1 year ago'],function(v){lead.regenWhen=v;hsSave({ci_regen_when:v});go('medical_records');});});}
+  else if(s==='medical_records'){addDiv('Section 8 · Medical Records');say('Do you have any <strong>medical records, labs, imaging, or reports</strong> related to your condition?',600,true).then(function(){qr(['Yes, I can share them','Yes, but later','No, not yet','Not sure'],function(v){lead.medicalRecords=v;hsSave({ci_medical_records:v});if(v==='Yes, I can share them'){say('Great. Our team may ask you to share relevant records before your consultation so the medical team can better understand your case.',700).then(function(){go('summary');});}else go('summary');});});}
+  else if(s==='summary'){var sc=calcScore(),sl=scoreLbl(sc);hsSave({ci_lead_score:sc,ci_lead_status:sl.status,hs_lead_status:sl.hs,ci_readiness:lead.readiness,ci_timeline:lead.timeline});addDiv('Section 9 · Summary & Next Step');say('Thank you. Here is a quick summary of the information you shared:',700).then(function(){addMsg(buildSum(),'bot',true);return say('Our patient coordination team will review your information and contact you to better understand your case, answer your questions, and guide you toward the next step.',1000);}).then(function(){return say('<strong>Please remember:</strong> this chat does not provide a diagnosis or medical recommendation. A personalized plan can only be discussed after reviewing your information and speaking with our team.',900,true);}).then(endBtns);}
 }
-function hsPatch(props) { return hsSave(props); }
-var lead = {
-  firstName:'', lastName:'', phone:'', email:'',
-  condition:'', stemCellHistory:'', pricingAck:'',
-  travel:'', timeline:'',
-  score:0, status:''
-};
-var STEPS = ['welcome','first_name','last_name','phone','email','condition','stem_cell_history','pricing_ack','travel','timeline','summary'];
-var progressMap = {
-  welcome:0, first_name:9, last_name:18, phone:27, email:36,
-  condition:45, stem_cell_history:55, pricing_ack:65,
-  travel:78, timeline:90, summary:100
-};
-var messagesEl = document.getElementById('chatMessages');
-var inputAreaEl = document.getElementById('inputArea');
-var progressEl = document.getElementById('progressFill');
-function setProgress(step) { progressEl.style.width = (progressMap[step] || 0) + '%'; }
-function scrollBottom() { messagesEl.scrollTop = messagesEl.scrollHeight; }
-function addMsg(text, role, isHTML) {
-  role = role || 'bot'; isHTML = isHTML || false;
-  var wrapper = document.createElement('div');
-  wrapper.className = 'msg ' + role;
-  var avatar = document.createElement('div');
-  avatar.className = 'msg-avatar';
-  if (role === 'bot') { avatar.innerHTML = '<img src="https://www.cellularhopeinstitute.com/wp-content/uploads/2026/05/ci-logo.jpg" alt="Cellular Institute">'; } else { avatar.textContent = String.fromCodePoint(128100); }
-  var bubble = document.createElement('div');
-  bubble.className = 'msg-bubble';
-  if (isHTML) bubble.innerHTML = text;
-  else bubble.textContent = text;
-  wrapper.appendChild(avatar);
-  wrapper.appendChild(bubble);
-  messagesEl.appendChild(wrapper);
-  scrollBottom();
-  return bubble;
-}
-function addSectionDivider(label) {
-  var divider = document.createElement('div');
-  divider.className = 'section-divider';
-  divider.textContent = label;
-  messagesEl.appendChild(divider);
-  scrollBottom();
-}
-function showTyping() {
-  var wrapper = document.createElement('div');
-  wrapper.className = 'msg bot'; wrapper.id = 'typingIndicator';
-  var avatar = document.createElement('div');
-  avatar.className = 'msg-avatar';
-  avatar.textContent = String.fromCodePoint(129516);
-  var bubble = document.createElement('div');
-  bubble.className = 'msg-bubble typing-dots';
-  bubble.innerHTML = '<span></span><span></span><span></span>';
-  wrapper.appendChild(avatar); wrapper.appendChild(bubble);
-  messagesEl.appendChild(wrapper); scrollBottom();
-}
-function hideTyping() { var t = document.getElementById('typingIndicator'); if (t) t.remove(); }
-function botSay(text, delay, isHTML) {
-  delay = delay || 600; isHTML = isHTML || false;
-  return new Promise(function(resolve) {
-    showTyping();
-    setTimeout(function() {
-      hideTyping();
-      addMsg(text, 'bot', isHTML);
-      resolve();
-    }, delay);
-  });
-}
-function clearInput() { inputAreaEl.innerHTML = ''; }
-function renderQuickReplies(options, onSelect) {
-  clearInput();
-  var container = document.createElement('div');
-  container.className = 'cw-quick-replies';
-  options.forEach(function(opt) {
-    var btn = document.createElement('button');
-    btn.className = 'qr-btn';
-    btn.textContent = opt.label || opt;
-    btn.addEventListener('click', function() {
-      container.querySelectorAll('.qr-btn').forEach(function(b){ b.disabled = true; });
-      btn.classList.add('selected');
-      addMsg(opt.label || opt, 'user');
-      onSelect(opt.value !== undefined ? opt.value : (opt.label || opt));
-    });
-    container.appendChild(btn);
-  });
-  inputAreaEl.appendChild(container);
-}
-function renderTextInput(placeholder, onSubmit, inputType) {
-  inputType = inputType || 'text';
-  clearInput();
-  var row = document.createElement('div');
-  row.className = 'cw-text-input-row';
-  var input = document.createElement('input');
-  input.type = inputType;
-  input.className = 'cw-text-input';
-  input.placeholder = placeholder;
-  var btn = document.createElement('button');
-  btn.className = 'cw-send-btn';
-  btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24"><path d="M2 21l21-9-21-9v7l15 2-15 2z"/></svg>';
-  var submit = function() {
-    var val = input.value.trim();
-    if (!val) return;
-    input.disabled = true; btn.disabled = true;
-    addMsg(val, 'user');
-    onSubmit(val);
-  };
-  btn.addEventListener('click', submit);
-  input.addEventListener('keydown', function(e){ if (e.key === 'Enter') submit(); });
-  row.appendChild(input); row.appendChild(btn);
-  inputAreaEl.appendChild(row);
-  setTimeout(function(){ input.focus(); }, 100);
-}
-function renderPhoneInput(onSubmit) {
-  clearInput();
-  var row = document.createElement('div');
-  row.className = 'cw-phone-row cw-text-input-row';
-  var select = document.createElement('select');
-  select.className = 'cw-country-select';
-  var codes = [
-    ['+1','US/CA'],['+52','MX'],['+44','UK'],['+34','ES'],['+49','DE'],['+33','FR'],
-    ['+39','IT'],['+55','BR'],['+54','AR'],['+57','CO'],['+56','CL'],['+51','PE'],
-    ['+593','EC'],['+502','GT'],['+506','CR'],['+61','AU'],['+81','JP'],['+82','KR'],
-    ['+86','CN'],['+91','IN'],['+971','AE'],['+966','SA'],['+972','IL'],['+7','RU'],
-    ['+27','ZA'],['+234','NG'],['+20','EG'],['+212','MA']
-  ];
-  codes.forEach(function(c) {
-    var opt = document.createElement('option');
-    opt.value = c[0].trim();
-    opt.textContent = c[0].trim() + ' ' + c[1];
-    select.appendChild(opt);
-  });
-  var input = document.createElement('input');
-  input.type = 'tel'; input.className = 'cw-text-input'; input.placeholder = 'Phone number';
-  var btn = document.createElement('button');
-  btn.className = 'cw-send-btn';
-  btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24"><path d="M2 21l21-9-21-9v7l15 2-15 2z"/></svg>';
-  var submit = function() {
-    var num = input.value.trim();
-    if (!num) return;
-    input.disabled = true; btn.disabled = true; select.disabled = true;
-    var full = select.value + ' ' + num;
-    addMsg(full, 'user');
-    onSubmit(full);
-  };
-  btn.addEventListener('click', submit);
-  input.addEventListener('keydown', function(e){ if (e.key === 'Enter') submit(); });
-  row.appendChild(select); row.appendChild(input); row.appendChild(btn);
-  inputAreaEl.appendChild(row);
-  setTimeout(function(){ input.focus(); }, 100);
-}
-function calcScore() {
-  var s = 0;
-  var cond = lead.condition.toLowerCase();
-  if (['auto immune','autoimmune','chronic degenerative','als','parkinson','ms','multiple sclerosis','stroke','spinal cord'].some(function(k){ return cond.indexOf(k) > -1; })) s += 40;
-  else if (['sport injury','pain management','arthritis','chronic pain','back pain'].some(function(k){ return cond.indexOf(k) > -1; })) s += 25;
-  else s += 15;
-  if (lead.travel === 'Yes, I can travel') s += 20;
-  else if (lead.travel === 'Maybe, need more info') s += 10;
-  var t = lead.timeline.toLowerCase();
-  if (t.indexOf('asap') > -1 || t.indexOf('1') === 0) s += 10;
-  else if (t.indexOf('3') === 0) s += 5;
-  if (lead.stemCellHistory && lead.stemCellHistory.toLowerCase().indexOf('yes') > -1) s += 5;
-  return s;
-}
-function scoreLabel(s) {
-  if (s >= 70) return { label: 'Hot', cls: 'score-hot', status: 'HOT' };
-  if (s >= 40) return { label: 'Warm', cls: 'score-warm', status: 'WARM' };
-  return { label: 'Cool', cls: 'score-cool', status: 'COOL' };
-}
-function buildSummaryHTML() {
-  var html = '<div class="summary-card">';
-  html += '<h3>Your Profile</h3>';
-  html += '<div class="summary-row"><span class="label">Name</span><span class="value">' + lead.firstName + ' ' + lead.lastName + '</span></div>';
-  html += '<div class="summary-row"><span class="label">Phone</span><span class="value">' + lead.phone + '</span></div>';
-  html += '<div class="summary-row"><span class="label">Email</span><span class="value">' + lead.email + '</span></div>';
-  html += '<div class="summary-row"><span class="label">Condition / Goal</span><span class="value">' + lead.condition + '</span></div>';
-  html += '<div class="summary-row"><span class="label">Prior Stem Cell</span><span class="value">' + lead.stemCellHistory + '</span></div>';
-  html += '<div class="summary-row"><span class="label">Can Travel</span><span class="value">' + lead.travel + '</span></div>';
-  html += '<div class="summary-row"><span class="label">Timeline</span><span class="value">' + lead.timeline + '</span></div>';
-  html += '</div>';
-  return html;
-}
-function showRestartButton() {
-  clearInput();
-  var restartBtn = document.createElement('button');
-  restartBtn.className = 'qr-btn';
-  restartBtn.textContent = 'Start Over';
-  restartBtn.style.margin = '8px auto 0';
-  restartBtn.addEventListener('click', function() {
-    Object.keys(lead).forEach(function(k){ lead[k] = typeof lead[k] === 'number' ? 0 : ''; });
-    hsContactId = null;
-    messagesEl.innerHTML = '';
-    clearInput();
-    goToStep('welcome');
-  });
-  var btnWrap = document.createElement('div');
-  btnWrap.className = 'cw-quick-replies';
-  btnWrap.style.justifyContent = 'center';
-  btnWrap.appendChild(restartBtn);
-  inputAreaEl.appendChild(btnWrap);
-}
-function goToStep(step) {
-  setProgress(step);
-  if (step === 'welcome') {
-    addSectionDivider('Section 1 · Welcome');
-    botSay('Welcome to <strong>Cellular Institute</strong>! My goal is to prequalify a tailored regenerative health experience for you. I will gather some basic information so our team can contact you.', 900, true).then(function() {
-      return botSay('Ready to get started?', 500);
-    }).then(function() {
-      renderQuickReplies(['Yes, go ahead', 'Tell me more first'], function(val) {
-        if (val === 'Tell me more first') {
-          botSay('We specialize in advanced stem cell therapies, PRP treatments, and regenerative medicine with world-class doctors in Cancun, Mexico. Thousands of patients have seen life-changing results.', 800).then(function() {
-            renderQuickReplies(['Yes, lets start'], function() { goToStep('first_name'); });
-          });
-        } else {
-          goToStep('first_name');
-        }
-      });
-    });
-  }
-  else if (step === 'first_name') {
-    addSectionDivider('Section 2 · Your Contact Info');
-    botSay("Great! Let's start with a few quick details so we can personalize your experience.", 600).then(function() {
-      return botSay('What is your <strong>first name</strong>?', 400, true);
-    }).then(function() {
-      renderTextInput('Your first name', function(val) {
-        lead.firstName = val;
-        goToStep('last_name');
-      });
-    });
-  }
-  else if (step === 'last_name') {
-    botSay('Nice to meet you, ' + lead.firstName + '! What is your <strong>last name</strong>?', 500, true).then(function() {
-      renderTextInput('Your last name', function(val) {
-        lead.lastName = val;
-        goToStep('phone');
-      });
-    });
-  }
-  else if (step === 'phone') {
-    botSay('What is the best phone number to reach you? Select your country code first.', 600).then(function() {
-      renderPhoneInput(function(val) {
-        lead.phone = val;
-        goToStep('email');
-      });
-    });
-  }
-  else if (step === 'email') {
-    botSay('And your <strong>email address</strong>?', 500, true).then(function() {
-      renderTextInput('your@email.com', function(val) {
-        lead.email = val;
-        hsSave({
-          firstname: lead.firstName,
-          lastname: lead.lastName,
-          phone: lead.phone,
-          email: lead.email,
-          hs_lead_status: 'IN_PROGRESS'
-        });
-        goToStep('condition');
-      }, 'email');
-    });
-  }
-  else if (step === 'condition') {
-    addSectionDivider('Section 3 · Your Health Goal');
-    botSay('Thanks, ' + lead.firstName + '! What condition or health goal are you looking to address?', 600).then(function() {
-      renderQuickReplies([
-        'Anti-Aging / Wellness',
-        'Sport Injury / Pain Management',
-        'Anti-Aging / Longevity',
-        'Auto Immune Conditions',
-        'Chronic Degenerative Condition',
-        'Other'
-      ], function(val) {
-        if (val === 'Other') {
-          botSay('Please tell us more about the condition or health goal:', 400).then(function() {
-            renderTextInput('Describe your condition', function(otherVal) {
-              lead.condition = otherVal;
-              hsSave({ ci_condition: otherVal });
-              goToStep('stem_cell_history');
-            });
-          });
-        } else {
-          lead.condition = val;
-          hsSave({ ci_condition: val });
-          goToStep('stem_cell_history');
-        }
-      });
-    });
-  }
-  else if (step === 'stem_cell_history') {
-    botSay('Have you had <strong>stem cell therapy</strong> or any regenerative treatments in the past?', 600, true).then(function() {
-      renderQuickReplies([
-        'Yes, stem cell therapy',
-        'Yes, other regenerative treatments',
-        'No, this would be my first time',
-        'Not sure'
-      ], function(val) {
-        lead.stemCellHistory = val;
-        hsSave({ ci_stem_cell_history: val });
-        goToStep('pricing_ack');
-      });
-    });
-  }
-  else if (step === 'pricing_ack') {
-    addSectionDivider('Section 4 · Investment & Commitment');
-    botSay('Our regenerative treatment programs <strong>start at $5,000</strong>.', 700, true).then(function() {
-      return botSay('Do you understand this is an <strong>out-of-pocket procedure</strong> that is not covered by insurance?', 700, true);
-    }).then(function() {
-      renderQuickReplies([
-        { label: 'Proceed',         value: 'Proceed' },
-        { label: 'Do Not Proceed',  value: 'Do Not Proceed' },
-        { label: 'Not Ready Yet',   value: 'Not Ready Yet' }
-      ], function(val) {
-        lead.pricingAck = val;
-        hsSave({ ci_pricing_acknowledgment: val });
-        if (val === 'Proceed') {
-          botSay('Wonderful! Let me ask a few final questions so we can build the right plan for you.', 700).then(function(){
-            goToStep('travel');
-          });
-        } else if (val === 'Not Ready Yet') {
-          hsSave({ ci_lead_status: 'NURTURE', hs_lead_status: 'OPEN' });
-          botSay('No problem, ' + lead.firstName + '. We completely understand. We will save your information and send you educational resources so you can learn at your own pace.', 800).then(function() {
-            return botSay('When you are ready, our coordinators will be here to guide you. Thank you for your interest in <strong>Cellular Institute</strong>!', 700, true);
-          }).then(function() {
-            showRestartButton();
-          });
-        } else {
-          hsSave({ ci_lead_status: 'DISQUALIFIED', hs_lead_status: 'UNQUALIFIED' });
-          botSay('Thank you for your time, ' + lead.firstName + '. We wish you the very best on your health journey.', 800).then(function() {
-            return botSay('If anything changes in the future, we are always here to help.', 600);
-          }).then(function() {
-            showRestartButton();
-          });
-        }
-      });
-    });
-  }
-  else if (step === 'travel') {
-    addSectionDivider('Section 5 · Logistics');
-    botSay('Our treatments are performed at our clinic in <strong>Cancun, Mexico</strong>. Are you able to travel?', 600, true).then(function() {
-      renderQuickReplies(['Yes, I can travel', 'Maybe, need more info', 'No, looking for local options'], function(val) {
-        lead.travel = val;
-        hsSave({ ci_can_travel: val });
-        goToStep('timeline');
-      });
-    });
-  }
-  else if (step === 'timeline') {
-    botSay('When are you hoping to begin treatment?', 500).then(function() {
-      renderQuickReplies(['ASAP', '1 to 3 months', '3 to 6 months', '6+ months', 'Just researching'], function(val) {
-        lead.timeline = val;
-        hsSave({ ci_timeline: val });
-        goToStep('summary');
-      });
-    });
-  }
-  else if (step === 'summary') {
-    addSectionDivider('Section 6 · Welcome to the Family');
-    var score = calcScore();
-    lead.score = score;
-    var sl = scoreLabel(score);
-    lead.status = sl.status;
-    hsSave({
-      ci_lead_score: score,
-      ci_lead_status: sl.status,
-      hs_lead_status: sl.status === 'HOT' ? 'CONNECTED' : (sl.status === 'WARM' ? 'OPEN' : 'NEW'),
-      ci_timeline: lead.timeline,
-      ci_can_travel: lead.travel,
-      ci_condition: lead.condition,
-      ci_stem_cell_history: lead.stemCellHistory,
-      ci_pricing_acknowledgment: lead.pricingAck
-    });
-    botSay('Thank you, ' + lead.firstName + '! Here is a summary of your profile:', 700).then(function() {
-      addMsg(buildSummaryHTML(), 'bot', true);
-      return botSay("We're going to <strong>study and design a personalized treatment plan</strong> for you. A member of our team will reach out to you shortly, usually within 24 hours. Welcome to the <strong>Cellular Institute family</strong>! &#127881;", 1000, true);
-    }).then(function() {
-      if (sl.status === 'HOT') {
-        return botSay('Based on your profile, you are a <strong>priority candidate</strong> for our regenerative programs. Expect a call very soon!', 700, true);
-      } else if (sl.status === 'WARM') {
-        return botSay('Our team will review your profile and send you relevant program options.', 700);
-      } else {
-        return botSay('Our team will send you educational resources and program information to support your research.', 700);
-      }
-    }).then(function() {
-      showRestartButton();
-    });
-  }
-}
-goToStep('welcome');
+go('welcome');
 </script>
 </body>
 </html>
